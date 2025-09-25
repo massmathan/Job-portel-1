@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.job_portal.jobportal.Service.JobService;
 import com.example.job_portal.jobportal.module.Jobs;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/job")
@@ -26,18 +28,14 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
-
-     @PostMapping("/create")
-    public ResponseEntity<?> createJob(@RequestBody Jobs jobDetails) {
-    String msg = jobService.create(jobDetails);
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(msg);
+    @PostMapping("/create")
+    public ResponseEntity<?> createJob(@Valid @RequestBody Jobs jobDetails) {
+        String msg = jobService.create(jobDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }
 
-
-     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editJob(@PathVariable int id,
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<?> editJob(@PathVariable Long id,
                                        @RequestBody Jobs jobDetails) {
         try {
             String msg = jobService.editJob(id, jobDetails);
@@ -48,7 +46,7 @@ public class JobController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteJobs(@PathVariable  Integer id) {
+    public ResponseEntity<String> deleteJobs(@PathVariable  Long id) {
         try {
             jobService.deleteJobs(id);
             return ResponseEntity.ok("All Jobs deleted successfully.");
@@ -58,7 +56,7 @@ public class JobController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Jobs> getJobs(@PathVariable int id) {
+    public ResponseEntity<Jobs> getJobs(@PathVariable Long id) {
         Jobs Jobs = jobService.getJob(id);
         return ResponseEntity.ok(Jobs);
     }

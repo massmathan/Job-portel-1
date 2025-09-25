@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
         this.encoder = encoder;
     }
 
-        public String create(User userInfo) {
+    public String create(User userInfo) {
         userInfo.setPassword(encoder.encode(userInfo.getPassword())); 
         userRepository.save(userInfo);
         return "User added successfully!";
@@ -33,9 +33,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
         return new UserInfoDetails(user); 
-}
+    }
 
 
 }

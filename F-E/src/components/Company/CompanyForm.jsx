@@ -3,9 +3,10 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from "axios";
 import { useNavigate, useParams } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/AuthContext';
 
 
 
@@ -19,12 +20,14 @@ function CompanyForm() {
   const [logoFile,setLogoFile] = useState(null);
     const { id } = useParams(); 
   const navigate = useNavigate();
-
-  const token = localStorage.getItem('accessToken');
+  const { tokenvalue } = useContext(AuthContext);
+const {token} = useContext(AuthContext) ?? localStorage.getItem('accessToken');
 
 
   useEffect(() => {
-    console.log("token:", token);
+    console.log("token:", tokenvalue);
+    console.log("id:", id);
+    console.log("AuthContext token:", token);
   if (id) {
     axios.get(`http://localhost:8080/api/company/get/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -65,14 +68,14 @@ function CompanyForm() {
       await axios.put(
         `http://localhost:8080/api/company/edit/${id}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data",Authorization: `Bearer ${token}` } }
       );
       alert("Company updated successfully!");
     } else {
       await axios.post(
         "http://localhost:8080/api/company/create",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" ,Authorization: `Bearer ${token}`} }
       );
       alert("Company submitted successfully!");
     }
@@ -85,7 +88,7 @@ function CompanyForm() {
 
   return (
     <div className="container pt-5 pb-5 d-flex justify-content-center text-align-center">
-      <div className="col-sm-5 p-4 border rounded">
+      <div className="col-sm-5 p-4 border rounded shadow-sm bg-light">
         <div className='d-flex justify-c    ontent-center p-3'><h1 className='text-align-center'>Company Details</h1></div>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
          

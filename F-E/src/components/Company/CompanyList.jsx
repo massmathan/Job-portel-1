@@ -1,17 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { useNavigate } from 'react-router-dom';
-
+import { AuthContext } from '../../AuthContext/AuthContext';
 import axios from "axios";
 
 function CompanyTable() {
   const [companies, setCompanies] = useState([]);
   const navigate = useNavigate();
+const {token} = useContext(AuthContext) ?? localStorage.getItem('accessToken');
 
 
   useEffect(() => {
+    console.log("Fetching companies..." + token);
     axios
-      .get("http://localhost:8080/api/company/getAll") 
+      .get("http://localhost:8080/api/company/getAll",{ headers: { Authorization: `Bearer ${token}` } }) 
       .then((res) => {setCompanies(res.data); console.log(res.data)})
       .catch((err) => console.error("Error fetching companies:", err));
   }, []);
@@ -19,7 +21,7 @@ function CompanyTable() {
   const handleDelete = (id) => {
   if (window.confirm("Are you sure you want to delete this company?")) {
     axios
-      .delete(`http://localhost:8080/api/company/delete/${id}`)
+      .delete(`http://localhost:8080/api/company/delete/${id}`,{ headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setCompanies(companies.filter((c) => c.id !== id));
       })

@@ -54,7 +54,7 @@ function SignUp() {
 
   return (
     <div className="container pt-5 d-flex justify-content-center text-align-center">
-      <div className="col-sm-5 p-4 border rounded">
+      <div className="col-sm-5 p-4 border rounded shadow-sm bg-light">
         <div className='d-flex justify-content-center p-3'><h1 className='text-align-center'>SignUp</h1></div>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row>

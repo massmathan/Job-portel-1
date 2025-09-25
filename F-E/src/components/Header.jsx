@@ -1,9 +1,13 @@
-import Navbars from "./Navbar";
-
+import React from "react";
+import Navbars from "./Navbars";
 
 
 function Header() {
-    return (<Navbars/>);   
+    return (
+    
+    <Navbars/>
+
+);   
 }
 
 

@@ -1,6 +1,10 @@
 package com.example.job_portal.jobportal.Controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,22 +47,23 @@ public class UserController {
         return "Welcome this endpoint is not secure";
     }
 
-    @PostMapping("/generateTokens") 
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-
-        
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getUsername(), authRequest.getPassword())
-        );
-        System.out.println("Mathan Raj");
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
-        } else {
-            throw new UsernameNotFoundException("Invalid user request!");
-        }
+    @PostMapping("/generateTokens")
+public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                    authRequest.getUsername(), authRequest.getPassword())
+    );
+    if (authentication.isAuthenticated()) {
+        String token = jwtService.generateToken(authRequest.getUsername());
+        Map<String, Object> result = new HashMap<>();
+        result.put("accessToken", token);
+        result.put("username", authRequest.getUsername());
+        return ResponseEntity.ok(result);
+    } else {
+        throw new UsernameNotFoundException("Invalid user request!");
     }
+}
+
 
     @PostMapping("/addNewUser")
     public String addNewUser(@RequestBody User userInfo) {

@@ -1,102 +1,42 @@
-import { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Card, Button } from "react-bootstrap";
 
-import axios from "axios";
-
-function JobList() {
+const JobList = () => {
   const [jobs, setJobs] = useState([]);
-  const navigate = useNavigate();
+  const token = localStorage.getItem('accessToken');``
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/job/getAll") 
-      .then((res) => {setJobs(res.data); console.log(res.data)})
-      .catch((err) => console.error("Error fetching job:", err));
+    
+    axios.get("http://localhost:8080/api/job/getAll",{
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setJobs(data));
   }, []);
 
-  const handleDelete = (id) => {
-  if (window.confirm("Are you sure you want to delete this company?")) {
-    axios
-      .delete(`http://localhost:8080/api/job/delete/${id}`)
-      .then(() => {
-        setJobs(jobs.filter((c) => c.id !== id));
-      })
-      .catch((err) => console.error("Error deleting company:", err));
-  }
-};
-
-
-
-
-const handleEdit = (id) => {
-  navigate(`/job-form/${id}`);
-};
-
-
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-center">Job List</h2>
-      <div className="d-flex justify-content-end">
-        <button className="btn btn-success mb-3" onClick={() => navigate('/job-form')}> Post New job</button>
+    <div className="container py-5">
+      <h2>Available Jobs</h2>
+      <div className="row">
+        {jobs.map(job => (
+          <div className="col-md-4 mb-3" key={job.id}>
+            <Card>
+              <Card.Body>
+                <Card.Title>{job.title}</Card.Title>
+                <Card.Text>{job.description.substring(0, 100)}...</Card.Text>
+                <Card.Text><strong>Location:</strong> {job.location}</Card.Text>
+                <Card.Text><strong>Type:</strong> {job.jobType}</Card.Text>
+                <Link to={`/jobs/${job.id}`}>
+                  <Button variant="primary">View & Apply</Button>
+                </Link>
+              </Card.Body>
+            </Card>
+          </div>
+        ))}
       </div>
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Actions</th>
-            <th>Title</th>
-            <th>Job Type</th>
-            <th>Salary</th>
-            <th>Skills</th>
-            <th>Location</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {jobs.length > 0 ? (
-            jobs.map((job, index) => (
-              <tr key={job.id}>
-                <td>{index + 1}</td>
-                 <td>
-                  <button
-                    className="btn btn-primary btn-sm me-2"
-                    onClick={() => handleEdit(job.id)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(job.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-                <td>{job.title}</td>
-                <td>{job.jobType}</td>
-                <td>{job.salary}</td>
-                <td>{job.skills}</td>
-                <td>
-                  <a href={job.location} target="_blank" rel="noopener noreferrer">
-                    {job.location}
-                  </a>
-                </td>
-                <td>{job.description}</td>
-               
-              </tr> 
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center">
-                No job found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-
-      </Table>
     </div>
   );
-}
+};
 
 export default JobList;

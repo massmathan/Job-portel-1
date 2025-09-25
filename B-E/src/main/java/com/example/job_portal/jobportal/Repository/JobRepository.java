@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.example.job_portal.jobportal.module.Jobs;
 
 @Repository
-public interface JobRepository extends JpaRepository<Jobs, Integer> {
+public interface JobRepository extends JpaRepository<Jobs, Long> {
 
 }

@@ -1,58 +1,63 @@
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from "axios";
-// import { Link } from 'react-router-dom';
-
-
+import { AuthContext } from '../../AuthContext/AuthContext';
+import { useNavigate  } from 'react-router-dom';
 
 function SignIn() {
   const [validated, setValidated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
-  const [email,setEmail] = useState('');
-
-
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); 
-    const form = event.currentTarget;
-
-
+    event.preventDefault();
     setValidated(true);
 
-    const user = {
-    username: email,
-    password: password
-  };
+    const credentials = {
+      username: email,
+      password: password
+    };
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/auth/generateTokens', 
-        user
+        'http://localhost:8080/api/auth/generateTokens',
+        credentials
       );
+
       console.log("Server Response:", response.data);
-      localStorage.setItem('accessToken', response.data);
+
+      
+      const { accessToken, username  } = response.data;
+
+      login({username}, accessToken);
+
+      console.log("Login successful, user:", username);
+      navigate("/company-list");
     } catch (error) {
       console.error("Error submitting form:", error.response || error);
+      // TODO: show error message to the user
     }
-  };  
-
+  };
 
   return (
     <div className="container pt-5 d-flex justify-content-center text-align-center">
-      <div className="col-sm-5 p-4 border rounded">
-        <div className='d-flex justify-content-center p-3'><h1 className='text-align-center'>SignIn</h1></div>
+      <div className="col-sm-5 p-4 border rounded shadow-sm bg-light">
+        <div className='d-flex justify-content-center p-3'>
+          <h1 className='text-align-center'>SignIn</h1>
+        </div>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
-
           <Form.Group controlId="email">
-            <FloatingLabel label="Email address" className="    mb-3">
+            <FloatingLabel label="Email address" className="mb-3">
               <Form.Control
                 type="email"
                 placeholder="name@example.com"
-                    value = {email}
-                    onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <Form.Control.Feedback type="invalid">
@@ -88,9 +93,9 @@ function SignIn() {
             Sign In
           </Button>
         </Form>
-          <div className='col-sm p-3 d-flex flex-row justify-content-center align-items-cente'>
-             <p>Don't have account? <a href="/signup"  className=''> SignUp</a></p>
-          </div>
+        <div className='col-sm p-3 d-flex flex-row justify-content-center align-items-center'>
+          <p>Don't have account? <a href="/signup"> SignUp</a></p>
+        </div>
       </div>
     </div>
   );

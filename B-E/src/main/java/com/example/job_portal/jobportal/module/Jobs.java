@@ -1,10 +1,13 @@
 package com.example.job_portal.jobportal.module;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
@@ -13,25 +16,35 @@ public class Jobs {
 
      @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
+     @NotBlank(message = "Title is required")
     private String title;
 
+    @NotBlank(message = "Description is required")
+    @Column(length = 2000)
     private String description;
 
-    private String location ;
+    @NotBlank(message = "Location is required")
+    private String location;
 
+    @NotBlank(message = "Job type is required")
     private String jobType;
 
-    private String  salary ;
+    @NotNull(message = "Salary is required")
+    private Double salary;
 
-    private String skills;
+    @NotBlank(message = "Skills are required")
+    private String skills; // comma-separated
 
-    public Integer getId() {
+    private java.time.LocalDate postingDate = java.time.LocalDate.now();
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,11 +80,11 @@ public class Jobs {
         this.jobType = jobType;
     }
 
-    public String getSalary() {
+    public Double getSalary() {
         return salary;
     }
 
-    public void setSalary(String salary) {
+    public void setSalary(Double salary) {
         this.salary = salary;
     }
 
@@ -83,7 +96,15 @@ public class Jobs {
         this.skills = skills;
     }
 
+    public java.time.LocalDate getPostingDate() {
+        return postingDate;
+    }
 
+    public void setPostingDate(java.time.LocalDate postingDate) {
+        this.postingDate = postingDate;
+    }
+
+  
 
 
 }
