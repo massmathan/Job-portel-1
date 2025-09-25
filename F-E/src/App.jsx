@@ -1,9 +1,9 @@
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./AuthContext/AuthContext";
-import Header from "./components/Header";
 import AppRouters from "./routes/AppRouters";
-import Sidebar from "./components/Navbars";
-import DashboardLayout from "./pages/DashboardLayout";
+ import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+ 
 
 function App() {
   return (

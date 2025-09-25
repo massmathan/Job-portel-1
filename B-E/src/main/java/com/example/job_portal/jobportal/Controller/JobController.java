@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.job_portal.jobportal.Service.JobService;
 import com.example.job_portal.jobportal.module.Jobs;
 
-import jakarta.validation.Valid;
-
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/job")
@@ -29,7 +27,7 @@ public class JobController {
     private JobService jobService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createJob(@Valid @RequestBody Jobs jobDetails) {
+    public ResponseEntity<?> createJob(@RequestBody Jobs jobDetails) {
         String msg = jobService.create(jobDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }

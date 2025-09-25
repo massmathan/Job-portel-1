@@ -1,15 +1,14 @@
 package com.example.job_portal.jobportal.module;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
-
 @Entity
 @Table(name="Jobs")
 public class Jobs {
@@ -18,24 +17,19 @@ public class Jobs {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
-     @NotBlank(message = "Title is required")
     private String title;
 
-    @NotBlank(message = "Description is required")
     @Column(length = 2000)
     private String description;
 
-    @NotBlank(message = "Location is required")
     private String location;
 
-    @NotBlank(message = "Job type is required")
     private String jobType;
 
-    @NotNull(message = "Salary is required")
     private Double salary;
 
-    @NotBlank(message = "Skills are required")
-    private String skills; // comma-separated
+    @ElementCollection
+    private List<String> skills;
 
     private java.time.LocalDate postingDate = java.time.LocalDate.now();
 
@@ -88,20 +82,20 @@ public class Jobs {
         this.salary = salary;
     }
 
-    public String getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
-
     public java.time.LocalDate getPostingDate() {
         return postingDate;
     }
 
     public void setPostingDate(java.time.LocalDate postingDate) {
         this.postingDate = postingDate;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
     }
 
   

@@ -2,6 +2,7 @@ package com.example.job_portal.jobportal.Controller;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.example.job_portal.jobportal.Repository.ApplicationRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
 import com.example.job_portal.jobportal.module.Application;

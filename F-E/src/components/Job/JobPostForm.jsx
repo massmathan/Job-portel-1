@@ -51,7 +51,7 @@ function JobPostForm() {
 
     setValidated(true);
 
-    const JobPostDetails = { title, description, location, jobType, salary, skills };
+    const JobPostDetails = { title, description, location, jobType, salary,  skills: skills.split(",").map(s => s.trim()) };
 
     try {
       console.log("Submitting JobPostDetails:", JobPostDetails);
@@ -137,7 +137,7 @@ function JobPostForm() {
                 type="number"
                 placeholder="Salary"
                 value={salary}
-                onChange={(e) => setSalary(e.target.value)}
+                onChange={(e) => setSalary(Number(e.target.value))}
                 required
               />
               <Form.Control.Feedback type="invalid">Please provide a valid salary.</Form.Control.Feedback>
