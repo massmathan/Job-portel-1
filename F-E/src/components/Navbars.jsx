@@ -9,15 +9,15 @@ export default function Navbars() {
   return (
     <Navbar bg="light" expand="lg" className="mb-4">
       <Container>
-        <Navbar.Brand as={NavLink} to="/">
+        <Navbar.Brand as={NavLink} to="/dashboard">
           <img src="/logoimg.png" alt="logo" width={80} height={60} />
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav className="me-auto">
-            <Nav.Link as={NavLink} to="/home" end>
-              Home
+            <Nav.Link as={NavLink} to="/dashboard" end>
+              Dashbords
             </Nav.Link>
             <Nav.Link as={NavLink} to="/alljobs">
               All Jobs

@@ -26,28 +26,28 @@ const { token } = useContext(AuthContext) ?? localStorage.getItem('accessToken')
   <div className="row">
     {jobs.map(job => (
       <div className="col-md-* col-lg-* mb-5" key={job.id}>
-        <Card className="h-100 job-ticket shadow-sm border-0 position-relative">
+        <Card className="h-100 job-ticket shadow-sm border-secondary position-relative">
           <div className="ticket-header p-3 shadow bg-light  rounded-top">
-            <Card.Title className="mb-1 fw-bold ">{job.title}</Card.Title>
-            <Card.Subtitle>{job.jobType} | {job.location}</Card.Subtitle>
+            <Card.Title className="mb-1 fw-bold text-capitalize">{job.title}</Card.Title>
+            <Card.Subtitle className="text-capitalize">{job.jobType} | {job.location}</Card.Subtitle>
           </div>
           
           <Card.Body className="mb-5">
-            <Card.Text className="mb-2 text-truncate ">
+            <Card.Text className="mb-2 text-truncate text-capitalize">
               {job.description}
             </Card.Text>
 
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <Badge bg="info p-2">{job.jobType}</Badge>
-              <Badge bg="secondary ">{job.location}</Badge>
+              <Badge bg="info p-2 text-uppercase">{job.jobType}</Badge>
+              <Badge bg="secondary text-capitalize p-3 fw-bold"><strong className="text-uppercase">location -</strong> {job.location}</Badge>
             </div>
 
-            <Card.Text className="fw-semibold mb-3">
+            <Card.Text className="fw-semibold mb-3 text-capitalize">
               <strong>Salary:</strong> ${job.salary?.toLocaleString()}
             </Card.Text>
 
-            <Link to={`/jobs/${job.id}`}>
-              <Button variant="primary" className="w-100">View & Apply</Button>
+            <Link to={`/jobs/${job.id}`} className="text-decoration-none d-flex justify-content-center">
+              <Button variant="secondary" className="w-100 text-capitalize">View & Apply</Button>
             </Link>
           </Card.Body>
 

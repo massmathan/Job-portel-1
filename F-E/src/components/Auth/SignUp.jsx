@@ -3,8 +3,10 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/AuthContext';
 
 
 
@@ -16,8 +18,9 @@ function SignUp() {
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [email,setEmail] = useState('');
+  const navigate = useNavigate();
 
-
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault(); 
@@ -32,16 +35,20 @@ function SignUp() {
     setValidated(true);
 
     const user = {
-      // name: `${firstName} ${lastName}`,
-      userName: email,
+      username: `${firstName} ${lastName}`,
+      email: email,
       password: confirmPassword,
-      roles : 'user'
+      role : 'ADMIN'
     };
 
     try {
       console.log(user);
       const response = await axios.post("http://localhost:8080/api/auth/addNewUser", user);
       console.log("Server Response:", response.data);
+      const { accessToken, users  } = response.data;
+
+      login({users}, accessToken);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting form:", error);
     }

@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.Service;
+package com.example.job_portal.jobportal.DTO;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,14 +12,15 @@ import com.example.job_portal.jobportal.module.User;
 
 public class UserInfoDetails implements UserDetails {
 
+
     private String username;
     private String password; 
     private Collection<? extends GrantedAuthority> authorities;
 
    public UserInfoDetails(User user) {
-        this.username = user.getUserName();
+        this.username = user.getUsername();
         this.password = user.getPassword();
-        this.authorities = Arrays.stream(user.getRoles().split(","))
+        this.authorities = Arrays.stream(user.getRole().split(","))
         .map(String::trim)
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
@@ -59,4 +60,6 @@ public class UserInfoDetails implements UserDetails {
     public boolean isEnabled() {
         return true; 
     }
+
+
 }

@@ -1,8 +1,7 @@
 package com.example.job_portal.jobportal.module;
 import java.time.LocalDateTime;
-import java.util.List;  
 
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,24 +12,25 @@ import jakarta.persistence.ManyToOne;
  
 @Entity
 public class Application {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String fullName;
-    private String email;
-    private String phone;
-    private String coverLetter;
+    private String jobTitle;
+    private String company;
 
-    @ElementCollection
-    private List<String> skills;
+    @Column(name = "status")
+    private String status; // Applied, Interview, Rejected, Hired
 
-    private String resumeFileName;
-    private LocalDateTime submittedAt = LocalDateTime.now();
+    @Column(name = "interview_date")
+    private LocalDateTime interviewDate;
 
     @ManyToOne
-    @JoinColumn(name = "job_id")
-    private Jobs job;
+    @JoinColumn(name = "user_id")
+    private User applicant;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -40,70 +40,55 @@ public class Application {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getJobTitle() {
+        return jobTitle;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCompany() {
+        return company;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getStatus() {
+        return status;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getCoverLetter() {
-        return coverLetter;
+    public LocalDateTime getInterviewDate() {
+        return interviewDate;
     }
 
-    public void setCoverLetter(String coverLetter) {
-        this.coverLetter = coverLetter;
+    public void setInterviewDate(LocalDateTime interviewDate) {
+        this.interviewDate = interviewDate;
     }
 
-    public List<String> getSkills() {
-        return skills;
+    public User getApplicant() {
+        return applicant;
     }
 
-    public void setSkills(List<String> skills) {
-        this.skills = skills;
+    public void setApplicant(User applicant) {
+        this.applicant = applicant;
     }
 
-    public String getResumeFileName() {
-        return resumeFileName;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setResumeFileName(String resumeFileName) {
-        this.resumeFileName = resumeFileName;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public LocalDateTime getSubmittedAt() {
-        return submittedAt;
-    }
-
-    public void setSubmittedAt(LocalDateTime submittedAt) {
-        this.submittedAt = submittedAt;
-    }
-
-    public Jobs getJob() {
-        return job;
-    }
-
-    public void setJob(Jobs job) {
-        this.job = job;
-    }
-
+   
 
     
 

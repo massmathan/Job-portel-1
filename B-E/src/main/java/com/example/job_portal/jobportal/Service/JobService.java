@@ -17,7 +17,7 @@ public class JobService {
      public String create(Jobs jobDetails) {
             try{
                    Jobs savedJob = jobRepository.save(jobDetails);  
-                    return "Job created successfully with ID: " + savedJob.getId();
+                    return "Job created successfully with ID:" + savedJob.getId();
             }catch(Exception e){
                 return "Job Not Created";
             }   

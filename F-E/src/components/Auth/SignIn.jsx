@@ -19,7 +19,7 @@ function SignIn() {
     setValidated(true);
 
     const credentials = {
-      username: email,
+      email: email,
       password: password
     };
 
@@ -32,12 +32,12 @@ function SignIn() {
       console.log("Server Response:", response.data);
 
       
-      const { accessToken, username  } = response.data;
+      const { accessToken, users  } = response.data;
 
-      login({username}, accessToken);
+      login({users}, accessToken);
 
-      console.log("Login successful, user:", username);
-      navigate("/company-list");
+      console.log("Login successful, user:", users);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting form:", error.response || error);
       // TODO: show error message to the user

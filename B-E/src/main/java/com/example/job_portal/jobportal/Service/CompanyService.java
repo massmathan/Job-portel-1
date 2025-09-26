@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.job_portal.jobportal.Repository.CompanyRepository;
 import com.example.job_portal.jobportal.module.Companies;
-import java.util.List;
 
 @Service
 public class CompanyService {
@@ -36,14 +35,14 @@ public class CompanyService {
 
             try {
             company = companyRepository.save(company);
-            Path uploadDir = Paths.get("uploads");
+            Path uploadDir = Paths.get("uploads/logos");
             Files.createDirectories(uploadDir);
 
             String fileName = "logo_" + company.getId() + ".png";
             Path logoPath = uploadDir.resolve(fileName);
             Files.write(logoPath, logoFile.getBytes());
 
-            company.setLogo("/uploads/" + fileName); 
+            company.setLogo("/uploads/logos/" + fileName); 
             
             company = companyRepository.save(company);
 
