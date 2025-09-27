@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,17 +27,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.job_portal.jobportal.DTO.ApplicantDto;
 import com.example.job_portal.jobportal.Service.ApplicantService;
 import com.example.job_portal.jobportal.module.Applicant;
 import com.example.job_portal.jobportal.module.Application;
 import com.example.job_portal.jobportal.module.Jobs;
 import com.example.job_portal.jobportal.module.User;
- 
 
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/applicants")
-@CrossOrigin(origins = "http://localhost:3000") 
 public class ApplicantController {
 
     @Autowired
@@ -46,22 +44,20 @@ public class ApplicantController {
 
 
     @GetMapping("/metrics")
-    public Map<String, Long> getMetrics(@AuthenticationPrincipal User user) {
-        System.out.println("Fetching metrics for user: " + user.getUsername());
-        Map<String, Long> metrics = new HashMap<>();
-        metrics.put("totalApplications", applicantService.getTotalApplications(user));
-        metrics.put("interviewsScheduled", applicantService.getStatusCount(user, "Interview"));
-        metrics.put("offers", applicantService.getStatusCount(user, "Hired"));
-        metrics.put("rejections", applicantService.getStatusCount(user, "Rejected"));
-        return metrics;
+    public ResponseEntity<ApplicantDto> getMetrics() {
+        ApplicantDto applicantDto = applicantService.getMetrics();
+        System.out.println("Interviews Scheduled: " + applicantDto.getInterviewsScheduled());
+        return ResponseEntity.ok(applicantDto);
     }
+
 
     @GetMapping("/applications")
     public List<Application> getApplications(@AuthenticationPrincipal User user) {
         return applicantService.getApplications(user);
     }
 
-    @PostMapping(value = "/apply", consumes = {"multipart/form-data"})
+
+    @PostMapping(value = "/apply", consumes = { "multipart/form-data" })
     public ResponseEntity<Applicant> applyForJob(
             @RequestParam("name") String name,
             @RequestParam("email") String email,
@@ -81,8 +77,7 @@ public class ApplicantController {
         applicant.setName(name);
         applicant.setEmail(email);
         applicant.setJobTitle(jobTitle);
-
-        applicant.setResume(fileName); 
+        applicant.setResume(fileName);
         applicant.setStatus(status);
 
         Jobs job = new Jobs();
@@ -93,11 +88,13 @@ public class ApplicantController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<List<Applicant>> getAllApplicants() {
         List<Applicant> applicants = applicantService.getAllApplicants();
         return ResponseEntity.ok(applicants);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Applicant> getApplicantById(@PathVariable Long id) {
@@ -116,14 +113,16 @@ public class ApplicantController {
         return applicantService.updateStatus(id, status);
     }
 
+
     @GetMapping("/{id}/resume")
     public ResponseEntity<Resource> downloadResume(@PathVariable Long id) throws Exception {
         System.out.println("Downloading resume for applicant ID: " + id);
 
         Applicant applicant = applicantService.getById(id);
-
         Path filePath = Paths.get("uploads/resumes").resolve(applicant.getResume());
+
         System.out.println("File path: " + filePath.toString());
+
         Resource resource = new UrlResource(filePath.toUri());
 
         return ResponseEntity.ok()

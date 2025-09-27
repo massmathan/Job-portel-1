@@ -28,6 +28,7 @@ public class JobController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createJob(@RequestBody Jobs jobDetails) {
+        System.out.println(jobDetails);
         String msg = jobService.create(jobDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }

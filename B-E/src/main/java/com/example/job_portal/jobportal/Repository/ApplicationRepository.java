@@ -14,6 +14,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByApplicantOrderByCreatedAtDesc(User applicant);
 
     long countByApplicant(User applicant);
-    long countByApplicantAndStatus(User applicant, String status);
+    long countByStatus( String status);
 
 }

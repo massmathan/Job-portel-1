@@ -55,6 +55,7 @@ function JobPostForm() {
 
     try {
       console.log("Submitting JobPostDetails:", JobPostDetails);
+      console.log(token);
       if (id) {
         await axios.put(`http://localhost:8080/api/job/edit/${id}`, JobPostDetails, {
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

@@ -4,7 +4,8 @@ import axios from "axios";
 import { AuthContext } from "../AuthContext/AuthContext";
 
 const ApplicantDashboard = () => {
-  const { token } = useContext(AuthContext) ?? localStorage.getItem("accessToken");
+  const context = useContext(AuthContext);
+  const token = context?.token || localStorage.getItem("accessToken");
 
   const [metrics, setMetrics] = useState({
     totalApplications: 0,
@@ -16,57 +17,63 @@ const ApplicantDashboard = () => {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/applicant/metrics", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setMetrics(res.data))  
-      .catch((err) => console.error(err));  
+    if (!token) return;
+
+    const headers = { Authorization: `Bearer ${token}` };
 
     axios
-      .get("http://localhost:8080/api/applicant/applications", {
-        headers: { Authorization: `Bearer ${token}` },
+      .get("http://localhost:8080/api/applicants/metrics", { headers })
+      .then(res => {
+        setMetrics(res.data);
+        console.log("Fetched Metrics");
       })
-      .then((res) => setApplications(res.data))
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
+
+    axios
+      .get("http://localhost:8080/api/applicants/applications", { headers })
+      .then(res => {
+        setApplications(res.data);
+        console.log("Fetched Applications");
+      })
+      .catch(err => console.error(err));
   }, [token]);
 
   return (
     <div className="container py-4">
       <h2 className="fw-bold mb-4 text-center">Applicant Dashboard</h2>
 
-      {/* Metrics */}
-      <Row className="mb-4">
-        <Col>
+      {/* Metrics Cards */}
+      <Row className="mb-4 g-3">
+        <Col md={3}>
           <Card className="text-center p-3 shadow-sm">
-            <h5>Total Applications</h5>
+            <h6>Total Applications</h6>
             <h3>{metrics.totalApplications}</h3>
           </Card>
         </Col>
-        <Col>
+        <Col md={3}>
           <Card className="text-center p-3 shadow-sm">
-            <h5>Interviews Scheduled</h5>
+            <h6>Interviews Scheduled</h6>
             <h3>{metrics.interviewsScheduled}</h3>
           </Card>
         </Col>
-        <Col>
+        <Col md={3}>
           <Card className="text-center p-3 shadow-sm">
-            <h5>Offers</h5>
+            <h6>Offers</h6>
             <h3>{metrics.offers}</h3>
           </Card>
         </Col>
-        <Col>
+        <Col md={3}>
           <Card className="text-center p-3 shadow-sm">
-            <h5>Rejections</h5>
+            <h6>Rejections</h6>
             <h3>{metrics.rejections}</h3>
           </Card>
         </Col>
       </Row>
 
-      {/* Application List */}
-      <h4 className="mt-4 mb-3">My Applications</h4>
-      <Table striped hover responsive>
-        <thead>
+      {/* Applications Table */}
+      <h4 className="mt-5 mb-3">My Applications</h4>
+      <Table striped bordered hover responsive>
+        <thead className="table-dark">
           <tr>
             <th>Job Title</th>
             <th>Company</th>
@@ -75,26 +82,38 @@ const ApplicantDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {applications.map((app) => (
-            <tr key={app.id}>
-              <td>{app.jobTitle}</td>
-              <td>{app.company}</td>
-              <td>
-                <Badge
-                  bg={
-                    app.status === "Hired"
-                      ? "success"
-                      : app.status === "Rejected"
-                      ? "danger"
-                      : "info"
-                  }
-                >
-                  {app.status}
-                </Badge>
+          {applications.length === 0 ? (
+            <tr>
+              <td colSpan="4" className="text-center">
+                No applications found.
               </td>
-              <td>{app.interviewDate ? new Date(app.interviewDate).toLocaleString() : "-"}</td>
             </tr>
-          ))}
+          ) : (
+            applications.map((app) => (
+              <tr key={app.id}>
+                <td>{app.jobTitle}</td>
+                <td>{app.company}</td>
+                <td>
+                  <Badge
+                    bg={
+                      app.status === "Hired"
+                        ? "success"
+                        : app.status === "Rejected"
+                        ? "danger"
+                        : "info"
+                    }
+                  >
+                    {app.status}
+                  </Badge>
+                </td>
+                <td>
+                  {app.interviewDate
+                    ? new Date(app.interviewDate).toLocaleString()
+                    : "-"}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </Table>
     </div>

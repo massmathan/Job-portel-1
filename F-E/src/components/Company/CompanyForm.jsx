@@ -23,14 +23,15 @@ function CompanyForm() {
   const { tokenvalue } = useContext(AuthContext);
 const {token} = useContext(AuthContext) ?? localStorage.getItem('accessToken');
 
-
+  
   useEffect(() => {
     console.log("token:", tokenvalue);
     console.log("id:", id);
     console.log("AuthContext token:", token);
   if (id) {
     axios.get(`http://localhost:8080/api/company/get/${id}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      {  headers: {
+    'Authorization': `Bearer ${token}`  } }
     )
       .then(res => {
         const c = res.data;
@@ -62,9 +63,10 @@ const {token} = useContext(AuthContext) ?? localStorage.getItem('accessToken');
   formData.append("website", website);
   formData.append("description", description);
   formData.append("logo", logoFile);
-
+console.log(token);
   try {
-    if (id) {
+    if (id) { 
+      
       await axios.put(
         `http://localhost:8080/api/company/edit/${id}`,
         formData,

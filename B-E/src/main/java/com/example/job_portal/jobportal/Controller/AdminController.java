@@ -11,10 +11,9 @@ import com.example.job_portal.jobportal.DTO.AdminMetricsDTO;
 import com.example.job_portal.jobportal.Service.AdminService;
 import com.example.job_portal.jobportal.module.Application;
 import com.example.job_portal.jobportal.module.User;
-
+@CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:3000") 
 public class AdminController {
 
     private final AdminService adminService;
