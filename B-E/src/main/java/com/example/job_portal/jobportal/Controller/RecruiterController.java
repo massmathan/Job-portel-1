@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.MetricsResponse;
 import com.example.job_portal.jobportal.DTO.RecruiterDto;
+import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.RecruiterService;
+import com.example.job_portal.jobportal.module.User;
+
+
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -22,6 +26,14 @@ public class RecruiterController {
 
     @Autowired
     private RecruiterService recruiterService;
+
+    private UserRepository userRepository;
+
+    public RecruiterController(RecruiterService recruiterService, UserRepository userRepository) {
+        this.recruiterService = recruiterService;
+        this.userRepository = userRepository;
+        
+    }
 
     @GetMapping("/metrics")
     public MetricsResponse getMetrics() {
@@ -45,4 +57,11 @@ public class RecruiterController {
         recruiterService.updateApplicantStage(applicantId, stage);
         return ResponseEntity.ok("Stage updated");
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getRecruiters() {
+        List<User> recruiters = userRepository.findByRole("RECRUITER");
+        return ResponseEntity.ok(recruiters);
+    }
+
 }

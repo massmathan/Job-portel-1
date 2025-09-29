@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.example.job_portal.jobportal.module.Companies;
 import com.example.job_portal.jobportal.module.User;
+import java.util.List;
+
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Companies, Integer> {
-
+public interface CompanyRepository extends JpaRepository<Companies, Long> {
+  
 }

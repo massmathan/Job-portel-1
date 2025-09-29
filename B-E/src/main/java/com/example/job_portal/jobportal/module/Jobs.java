@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 @Entity
 @Table(name="Jobs")
@@ -31,8 +33,11 @@ public class Jobs {
     @ElementCollection
     private List<String> skills;
 
-    private java.time.LocalDate postingDate = java.time.LocalDate.now();
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Companies companies;
 
+    private java.time.LocalDate postingDate = java.time.LocalDate.now();
 
     public Long getId() {
         return id;
@@ -96,6 +101,14 @@ public class Jobs {
 
     public void setSkills(List<String> skills) {
         this.skills = skills;
+    }
+
+    public Companies getCompanies() {
+        return companies;
+    }
+
+    public void setCompanies(Companies companies) {
+        this.companies = companies;
     }
 
   

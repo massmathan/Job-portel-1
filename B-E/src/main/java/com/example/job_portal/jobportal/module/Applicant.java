@@ -1,48 +1,43 @@
 package com.example.job_portal.jobportal.module;
+
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
- 
+import java.time.LocalDate;
 
 @Entity
+@Table(name = "applicants")
 public class Applicant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String email;
 
+    @Column(name = "job_title")
     private String jobTitle;
 
     private String resume;
-    @ManyToOne
-    @JoinColumn(name = "job_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
     private Jobs job;
 
-    @Column(name = "status")
-    private String status; // e.g., Applied, Interviewing, Hired, Rejected 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruiter_id")
+    private User recruiter;
 
-    // @CreatedBy
-    // @Column(updatable = false)
-    // private String createdBy;
+    @Column(name = "status")
+    private String status; // Applied, Interviewing, Hired, Rejected
 
     @CreatedDate
-    @Column(updatable = false)
-    private java.time.LocalDate createdDate = java.time.LocalDate.now();
-
-    // @LastModifiedBy
-    // private String updatedBy;
-
-    // @LastModifiedDate
-    // private LocalDateTime updatedDate;
+    @Column(name = "created_date", updatable = false)
+    private LocalDate createdDate = LocalDate.now();
 
     public Long getId() {
         return id;
@@ -68,12 +63,36 @@ public class Applicant {
         this.email = email;
     }
 
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getResume() {
+        return resume;
+    }
+
+    public void setResume(String resume) {
+        this.resume = resume;
+    }
+
     public Jobs getJob() {
         return job;
     }
 
     public void setJob(Jobs job) {
         this.job = job;
+    }
+
+    public User getRecruiter() {
+        return recruiter;
+    }
+
+    public void setRecruiter(User recruiter) {
+        this.recruiter = recruiter;
     }
 
     public String getStatus() {
@@ -83,23 +102,12 @@ public class Applicant {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
-    public String getResume() {
-        return resume;
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
     }
 
-    public void setResume(String resume) {
-        this.resume = resume;
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-    
 }
-

@@ -72,7 +72,7 @@ console.log(token);
         formData,
         { headers: { "Content-Type": "multipart/form-data",Authorization: `Bearer ${token}` } }
       );
-      alert("Company updated successfully!");
+      alert("Company updated successfully!"); 
     } else {
       await axios.post(
         "http://localhost:8080/api/company/create",

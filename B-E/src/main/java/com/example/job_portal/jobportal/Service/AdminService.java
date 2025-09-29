@@ -4,9 +4,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.AdminMetricsDTO;
-import com.example.job_portal.jobportal.Repository.ApplicationRepository;
+import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
+import com.example.job_portal.jobportal.module.Applicant;
 import com.example.job_portal.jobportal.module.Application;
 import com.example.job_portal.jobportal.module.User;
 
@@ -17,14 +18,14 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
-    private final ApplicationRepository applicationRepository;
+    private final ApplicantRepository applicantRepository;
 
     public AdminService(UserRepository userRepository,
                         JobRepository jobRepository,
-                        ApplicationRepository applicationRepository) {
+                        ApplicantRepository applicantRepository) {
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
-        this.applicationRepository = applicationRepository;
+        this.applicantRepository = applicantRepository;
     }
 
     public AdminMetricsDTO getMetrics() {
@@ -32,7 +33,7 @@ public class AdminService {
         dto.setTotalUsers(userRepository.count());
         dto.setTotalRecruiters(userRepository.countByRole("RECRUITER"));
         dto.setTotalJobs(jobRepository.count());
-        dto.setTotalApplications(applicationRepository.count());
+        dto.setTotalApplications(applicantRepository.count());
         return dto;
     }
 
@@ -40,7 +41,7 @@ public class AdminService {
         return userRepository.findTop5ByOrderByCreatedAtDesc();
     }
 
-    public List<Application> getLatestApplications() {
-        return applicationRepository.findTop5ByOrderByCreatedAtDesc();
+    public List<Applicant> getLatestApplications() {
+        return applicantRepository.findTop5ByOrderByCreatedDateDesc();
     }
 }

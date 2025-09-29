@@ -61,7 +61,7 @@ public class CompanyService {
         return uploadDir.resolve(filename).normalize();
     }
 
-    public String getCompanyLogo(Integer id) {
+    public String getCompanyLogo(Long id) {
         Companies company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Company not found with ID: " + id));
 
@@ -80,15 +80,15 @@ public class CompanyService {
     }
 
 
-    public void deleteCompanies(Integer id) {
+    public void deleteCompanies(Long id) {
         companyRepository.deleteById(id);
     }
 
-    public Companies getCompanies(int id) {
+    public Companies getCompanies(Long  id) {
         return companyRepository.findById(id).orElse(null); 
     }
 
-     public String editCompany(int id,
+     public String editCompany(Long id,
                               String companyName,
                               String address,
                               String website,

@@ -30,8 +30,9 @@ const ApplicantDashboard = () => {
       .catch(err => console.error(err));
 
     axios
-      .get("http://localhost:8080/api/applicants/applications", { headers })
+      .get("http://localhost:8080/api/applicants/all", { headers })
       .then(res => {
+        console.log(res.data);
         setApplications(res.data);
         console.log("Fetched Applications");
       })
@@ -92,7 +93,7 @@ const ApplicantDashboard = () => {
             applications.map((app) => (
               <tr key={app.id}>
                 <td>{app.jobTitle}</td>
-                <td>{app.company}</td>
+                <td>{app['job']['companies'].companyName}</td>
                 <td>
                   <Badge
                     bg={

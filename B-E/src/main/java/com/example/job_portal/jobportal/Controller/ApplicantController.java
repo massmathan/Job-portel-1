@@ -64,7 +64,8 @@ public class ApplicantController {
             @RequestParam("resume") MultipartFile resumeFile,
             @RequestParam("jobTitle") String jobTitle,
             @RequestParam("jobId") Long jobId,
-            @RequestParam("status") String status
+            @RequestParam("status") String status,
+            @RequestParam("recruiterId") Long recruiterId  
     ) throws IOException {
 
         String fileName = resumeFile.getOriginalFilename();
@@ -84,9 +85,11 @@ public class ApplicantController {
         job.setId(jobId);
         applicant.setJob(job);
 
-        Applicant saved = applicantService.saveApplicant(applicant);
+        Applicant saved = applicantService.submitApplication(applicant, recruiterId);
+
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
+
 
 
     @GetMapping("/all")
@@ -107,9 +110,9 @@ public class ApplicantController {
     }
 
 
-    @PutMapping("/{id}/stage")
+    @PutMapping("/{id}/status")
     public Applicant updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String status = body.get("stage");
+        String status = body.get("status");
         return applicantService.updateStatus(id, status);
     }
 

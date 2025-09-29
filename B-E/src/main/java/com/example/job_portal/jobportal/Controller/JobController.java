@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.job_portal.jobportal.DTO.JobDto;
+import com.example.job_portal.jobportal.Repository.CompanyRepository;
+import com.example.job_portal.jobportal.Service.CompanyService;
 import com.example.job_portal.jobportal.Service.JobService;
+import com.example.job_portal.jobportal.module.Companies;
 import com.example.job_portal.jobportal.module.Jobs;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -26,10 +30,30 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
+    private CompanyService companyService;
+
+
+    public JobController(JobService jobService, CompanyService companyService) {
+        this.jobService = jobService;
+        this.companyService = companyService;
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<?> createJob(@RequestBody Jobs jobDetails) {
-        System.out.println(jobDetails);
-        String msg = jobService.create(jobDetails);
+    public ResponseEntity<?> createJob(@RequestBody JobDto jobDto) {
+         Jobs job = new Jobs();
+        job.setTitle(jobDto.getTitle());
+        job.setDescription(jobDto.getDescription());
+        job.setLocation(jobDto.getLocation());
+        job.setJobType(jobDto.getJobType());
+        job.setSalary(jobDto.getSalary());
+        job.setSkills(jobDto.getSkills());
+
+       
+        Long id = jobDto.getCompanyId(); 
+        Companies companies = companyService.getCompanies(id);
+        job.setCompanies(companies);
+
+        String msg = jobService.create(job);
         return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }
 

@@ -25,6 +25,12 @@ public class Application {
     @Column(name = "interview_date")
     private LocalDateTime interviewDate;
 
+    private String resume;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Jobs job;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User applicant;
@@ -86,6 +92,22 @@ public class Application {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getResume() {
+        return resume;
+    }
+
+    public void setResume(String resume) {
+        this.resume = resume;
+    }
+
+    public Jobs getJob() {
+        return job;
+    }
+
+    public void setJob(Jobs job) {
+        this.job = job;
     }
 
    

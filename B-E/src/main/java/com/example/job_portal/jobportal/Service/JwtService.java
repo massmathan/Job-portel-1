@@ -1,6 +1,5 @@
 package com.example.job_portal.jobportal.Service;
 
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,21 +18,28 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtService {
 
-    public static final String SECRET = "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
+    // 🔹 256-bit secret key (Base64 encoded)
+    public static final String SECRET =
+            "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
 
-    public String generateToken(String email) { // Use email as username
+    /**
+     * Generate token for an email/username.
+     */
+    public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, email);
     }
 
     private String createToken(Map<String, Object> claims, String email) {
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30 min
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
+        System.out.println("[JWT] Generated Token for " + email + ": " + token);
+        return token;
     }
 
     private Key getSignKey() {
@@ -42,32 +48,64 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        String username = extractClaim(token, Claims::getSubject);
+        System.out.println("[JWT] Extracted Username (Subject): " + username);
+        return username;
     }
 
     public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        Date expiration = extractClaim(token, Claims::getExpiration);
+        System.out.println("[JWT] Token Expiration Date: " + expiration);
+        return expiration;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
+        System.out.println("[JWT] Extracted Claims: " + claims);
         return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+        System.out.println("[JWT] Parsing token: " + token);
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        System.out.println("[JWT] All Claims: " + claims);
+        return claims;
     }
 
     private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        Date expiration = extractExpiration(token);
+        boolean expired = expiration.before(new Date());
+        System.out.println("[JWT] Current Time: " + new Date());
+        System.out.println("[JWT] Token Expiration: " + expiration);
+        System.out.println("[JWT] Is Token Expired? " + expired);
+        return expired;
     }
 
+    /**
+     * Validate token against given user details.
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+
+        System.out.println("=== JWT VALIDATION ===");
+        System.out.println("JWT Token: " + token);
+        System.out.println("Extracted Username from token: " + username);
+        System.out.println("UserDetails username: " + userDetails.getUsername());
+        System.out.println("Token expired? " + isTokenExpired(token));
+
+        boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+
+        if (isValid) {
+            System.out.println("✅ Token is VALID for this user");
+        } else {
+            System.out.println("❌ Token is NOT valid for this user");
+        }
+        System.out.println("======================");
+
+        return isValid;
     }
 }

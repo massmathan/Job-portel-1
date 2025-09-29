@@ -1,4 +1,4 @@
-import React, { useState, useContext ,useEffect  } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, FloatingLabel } from "react-bootstrap";
 import axios from "axios";
 import { AuthContext } from "../../AuthContext/AuthContext";
@@ -9,25 +9,32 @@ function ApplicantForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [resume, setResume] = useState(null);
-  const [jobId, setJobId] = useState(""); // if applicant chooses job
-   const [jobs, setJobs] = useState([]);
+  const [jobId, setJobId] = useState("");
+  const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
-  const { token } = useContext(AuthContext) ?? localStorage.getItem("accessToken");
+  const [recruiterId, setRecruiterId] = useState("");
+  const [recruiters, setRecruiters] = useState([]);
 
+  const { token } = useContext(AuthContext) ?? localStorage.getItem("accessToken");
   const navigate = useNavigate();
 
-   useEffect(() => {
+  useEffect(() => {
     axios
       .get("http://localhost:8080/api/job/getAll", {
-        headers: { Authorization: `Bearer ${token}` }
-      }) 
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => setJobs(res.data))
       .catch((err) => console.error(err));
-  }, []);
+
+    axios
+      .get("http://localhost:8080/api/recruiter/all", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setRecruiters(res.data))
+      .catch((err) => console.error(err));
+  }, [token]);
 
   const handleSubmit = async (event) => {
-
-
     event.preventDefault();
     const form = event.currentTarget;
 
@@ -36,7 +43,6 @@ function ApplicantForm() {
       setValidated(true);
       return;
     }
-
     setValidated(true);
 
     const formData = new FormData();
@@ -45,7 +51,8 @@ function ApplicantForm() {
     formData.append("resume", resume);
     formData.append("jobTitle", jobTitle);
     formData.append("jobId", jobId);
-    formData.append("stage", 'applied'); // default stage
+    formData.append("status", "applied");
+    formData.append("recruiterId", recruiterId);
 
     try {
       await axios.post("http://localhost:8080/api/applicants/apply", formData, {
@@ -54,14 +61,14 @@ function ApplicantForm() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Application submitted successfully!");
+      alert("Application submitted!");
       setName("");
       setEmail("");
       setResume(null);
       setJobTitle("");
       setJobId("");
-      navigate("/applications");
-
+      setRecruiterId("");
+      navigate("/applicants-list");
     } catch (err) {
       console.error("Error submitting application:", err);
       alert("Submission failed. Check console for error.");
@@ -112,28 +119,36 @@ function ApplicantForm() {
                 onChange={(e) => setJobTitle(e.target.value)}
                 required
               />
-              <Form.Control.Feedback type="invalid">
-                Please enter a valid job title.
-              </Form.Control.Feedback>
             </FloatingLabel>
           </Form.Group>
 
-        <Form.Group controlId="jobId">
-        {/* <FloatingLabel label="Select Job" className="mb-3"> */}
           <Form.Select
-            value={jobId} className="mb-3 p-3"
+            value={jobId}
+            className="mb-3 p-3"
             onChange={(e) => setJobId(e.target.value)}
+            required
           >
             <option value="">-- Select a job --</option>
             {jobs.map((job) => (
               <option key={job.id} value={job.id}>
                 {job.title}
-                 {/* (ID: {job.id}) */}
               </option>
             ))}
           </Form.Select>
-        {/* </FloatingLabel> */}
-      </Form.Group>
+
+          <Form.Select
+            value={recruiterId}
+            className="mb-3 p-3"
+            onChange={(e) => setRecruiterId(e.target.value)}
+            required
+          >
+            <option value="">-- Select recruiter --</option>
+            {recruiters.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.username}
+              </option>
+            ))}
+          </Form.Select>
 
           <Form.Group controlId="resume">
             <Form.Label>Upload Resume (PDF)</Form.Label>
@@ -143,9 +158,6 @@ function ApplicantForm() {
               onChange={(e) => setResume(e.target.files[0])}
               required
             />
-            <Form.Control.Feedback type="invalid">
-              Please upload your resume.
-            </Form.Control.Feedback>
           </Form.Group>
 
           <Button className="w-100 mt-3 p-2" variant="primary" type="submit">

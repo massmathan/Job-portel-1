@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Row, Col, Table, Badge, Button } from "react-bootstrap";
+import { Card, Row, Col, Table, Badge, Button, Modal } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { AuthContext } from "../AuthContext/AuthContext";
 
 const AdminDashboard = () => {
-  const { token } = useContext(AuthContext) ?? localStorage.getItem("accessToken");
+  const { token } = useContext(AuthContext); // token from context
+  const accessToken = token || localStorage.getItem("accessToken");
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [metrics, setMetrics] = useState({
     totalUsers: 0,
@@ -16,31 +21,63 @@ const AdminDashboard = () => {
   const [recentApplications, setRecentApplications] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
 
+  // open modal with selected user
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  // save edited user
+  const handleSaveUser = () => {
+    axios
+      .put(
+        `http://localhost:8080/api/admin/users/${selectedUser.id}`,
+        {
+          username: selectedUser.username,
+          email: selectedUser.email,
+          password: selectedUser.password || "", // optional
+          role: selectedUser.role,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // update user list
+        setRecentUsers((prev) =>
+          prev.map((u) => (u.id === res.data.id ? res.data : u))
+        );
+        setShowModal(false);
+      })
+      .catch((err) => console.error(err));
+  };
+
   useEffect(() => {
     // metrics
     axios
       .get("http://localhost:8080/api/admin/metrics", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => setMetrics(res.data))
       .catch((err) => console.error(err));
 
-    // latest applications
     axios
       .get("http://localhost:8080/api/admin/latest-applications", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => setRecentApplications(res.data))
       .catch((err) => console.error(err));
 
-    // latest users
     axios
       .get("http://localhost:8080/api/admin/latest-users", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => setRecentUsers(res.data))
       .catch((err) => console.error(err));
-  }, [token]);
+  }, [accessToken]);
 
   return (
     <div className="container py-4">
@@ -88,10 +125,17 @@ const AdminDashboard = () => {
         <tbody>
           {recentUsers.map((user) => (
             <tr key={user.id}>
-              <td>{user.user}</td>
+              <td>{user.username}</td>
               <td>{user.email}</td>
               <td>{user.role}</td>
               <td>
+                <Button
+                  size="sm"
+                  variant="outline-primary"
+                  onClick={() => handleEditUser(user)}
+                >
+                  Edit
+                </Button>{" "}
                 <Button size="sm" variant="outline-danger">
                   Deactivate
                 </Button>
@@ -147,6 +191,72 @@ const AdminDashboard = () => {
           ))}
         </tbody>
       </Table>
+
+      {/* Modal for editing */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedUser && (
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveUser();
+              }}
+            >
+              <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedUser.username}
+                  onChange={(e) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      username: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  value={selectedUser.email}
+                  onChange={(e) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Role</Form.Label>
+                <Form.Select
+                  value={selectedUser.role}
+                  onChange={(e) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      role: e.target.value,
+                    })
+                  }
+                >
+                  <option value="USER">USER</option>
+                  <option value="RECRUITER">RECRUITER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Button variant="primary" type="submit">
+                Save Changes
+              </Button>
+            </Form>
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

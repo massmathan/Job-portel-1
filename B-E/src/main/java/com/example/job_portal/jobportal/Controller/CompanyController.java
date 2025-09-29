@@ -47,7 +47,7 @@ public class CompanyController {
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editCompany(@PathVariable int id,
+    public ResponseEntity<?> editCompany(@PathVariable Long id,
                                         @RequestParam String companyName,
                                         @RequestParam String address,
                                         @RequestParam String website,
@@ -62,7 +62,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCompanies(@PathVariable  Integer id) {
+    public ResponseEntity<String> deleteCompanies(@PathVariable  Long id) {
         try {
             companyService.deleteCompanies(id);
             return ResponseEntity.ok("All companies deleted successfully.");
@@ -72,7 +72,7 @@ public class CompanyController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Companies> getCompanies(@PathVariable Integer id) {
+    public ResponseEntity<Companies> getCompanies(@PathVariable Long id) {
         Companies companies = companyService.getCompanies(id);
         return ResponseEntity.ok(companies);
     }

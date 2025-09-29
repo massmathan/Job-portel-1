@@ -6,15 +6,18 @@ import JobPostForm from "../components/Job/JobPostForm";
 import CompanyTable from "../components/Company/CompanyList";
 import JobList from "../components/Job/JobList";
 import SettingsForm from "../components/SettingsForm";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ApplicantList from "../components/Applicant/ApplicantList";
 import ApplicantForm from "../components/Applicant/ApplicantForm";
 import RecruiterDashboard from "./RecruiterDashboard";
 import AdminDashboard from "./AdminDashboard";
 import ApplicantDashboard from "./ApplicantDashboard";
 import PrivateRoute from "../AuthContext/PrivateRoute";
+import { AuthContext } from "../AuthContext/AuthContext";
 
 export default function DashboardLayout() {
+    const { user, role, logout } = useContext(AuthContext);
+  
   const [applications, setApplications] = useState([]);
 
   return (
@@ -39,8 +42,7 @@ export default function DashboardLayout() {
             <Route path="/settings" element={<SettingsForm />} />
 
             <Route path="/apply" element={<ApplicantForm setApplications={setApplications} applications={applications} />} />
-            <Route path="/applications" element={<ApplicantList applications={applications} />} />
-            <Route path="/applicants" element={<ApplicantList />} />
+            <Route path="/applicants-list" element={<ApplicantList applications={applications} />} />
 
             <Route
               path="/admin/dashboard"
@@ -67,7 +69,11 @@ export default function DashboardLayout() {
               }
             />
 
-            <Route path="*" element={<Navigate to="/user/dashboard" replace />} />
+            <Route path="*" element={<Navigate to={ role === "ADMIN"
+            ? "/admin/dashboard"
+            : role === "RECRUITER"
+            ? "/recruiter/dashboard"
+            : "/user/dashboard"} replace />} />
           </Routes>
         </main>
       </div>

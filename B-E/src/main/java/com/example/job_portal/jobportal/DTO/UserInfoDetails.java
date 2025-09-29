@@ -1,8 +1,7 @@
 package com.example.job_portal.jobportal.DTO;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,54 +11,62 @@ import com.example.job_portal.jobportal.module.User;
 
 public class UserInfoDetails implements UserDetails {
 
+    private final User user;
 
-    private String username;
-    private String password; 
-    private Collection<? extends GrantedAuthority> authorities;
-
-   public UserInfoDetails(User user) {
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.authorities = Arrays.stream(user.getRole().split(","))
-        .map(String::trim)
-        .map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return password; 
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+    public UserInfoDetails(User user) {
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; 
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; 
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; 
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; 
+        return true;
     }
 
-
+    public User getUser() {
+        return user;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

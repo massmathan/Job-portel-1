@@ -6,28 +6,33 @@ import { AuthContext } from "../../AuthContext/AuthContext";
 function ApplicantList() {
   const [applications, setApplications] = useState([]);
   const { token } = useContext(AuthContext) ?? localStorage.getItem("accessToken");
+  const {  role } = useContext(AuthContext)??localStorage.getItem("role");
+    const {  user } = useContext(AuthContext);
 
+
+  console.log("role",role);
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/applicants", {
+      .get("http://localhost:8080/api/applicants/all", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
+        console.log(res.data);
         setApplications(res.data);
         console.log("Fetched applications:", res.data);
       })
       .catch((err) => console.error("Error fetching applications:", err));
   }, [token]);
 
-  const handleStageChange = async (id, stage) => {
+  const handleStageChange = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/applicants/${id}/stage`,
-        { stage },
+        `http://localhost:8080/api/applicants/${id}/status`,
+        { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setApplications((prev) =>
-        prev.map((app) => (app.id === id ? { ...app, stage } : app))
+        prev.map((app) => (app.id === id ? { ...app, status } : app))
       );
     } catch (err) {
       console.error("Error updating status:", err);
@@ -41,22 +46,25 @@ function ApplicantList() {
         <thead>
           <tr>
             <th>Applicant Name</th>
+            <th>Company Name</th>
             <th>Email</th>
             <th>Job Title</th>
             <th>Status</th>
             <th>Resume</th>
-            <th>Actions</th>
+                        {user && (role === "ADMIN"||role === "RECRUITER") &&(  <th>Actions</th>)}
+           
           </tr>
         </thead>
         <tbody>
           {applications.map((app) => (
             <tr key={app.id}>
               <td className="text-capitalize">{app.name}</td>
+              <td>{app['job']['companies']['companyName']}</td>
               <td>{app.email}</td>
               <td className="text-capitalize">{app.jobTitle}</td>
               <td>
-              <Badge bg={app.stage === "Hired" ? "success" : app.stage === "Rejected" ? "danger" : "info"}>
-                {app.stage}
+              <Badge bg={app.status === "Hired" ? "success" : app.status === "Rejected" ? "danger" : "info"}>
+                {app.status}
               </Badge>
             </td>    
               <td>
@@ -87,7 +95,8 @@ function ApplicantList() {
                     View Resume
                   </Button>
               </td>
-              <td>
+
+            {user && (role === "ADMIN"||role === "RECRUITER") &&( <td>
                 <div className="d-flex gap-1">
                   <Button
                     size="sm"
@@ -111,7 +120,8 @@ function ApplicantList() {
                     Reject
                   </Button>
                 </div>
-              </td>
+              </td>)}
+             
             </tr>
           ))}
         </tbody>
