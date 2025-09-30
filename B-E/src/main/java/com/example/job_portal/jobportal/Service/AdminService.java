@@ -8,7 +8,6 @@ import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.Application;
 import com.example.job_portal.jobportal.module.User;
 
 
@@ -38,10 +37,10 @@ public class AdminService {
     }
 
     public List<User> getLatestUsers() {
-        return userRepository.findTop5ByOrderByCreatedAtDesc();
+        return userRepository.findTop10ByOrderByCreatedAtDesc();
     }
 
     public List<Applicant> getLatestApplications() {
-        return applicantRepository.findTop5ByOrderByCreatedDateDesc();
+        return applicantRepository.findTop10ByOrderByCreatedDateDesc();
     }
 }

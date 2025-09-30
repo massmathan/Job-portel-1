@@ -26,20 +26,23 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)  
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth
+   @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() 
-
-                    //  .requestMatchers("/api/applications/*/resume").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+                .requestMatchers("/api/users/recruiters").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN") 
+                .requestMatchers("/api/recruiter/**").hasAnyRole("RECRUITER", "ADMIN") 
+                .requestMatchers("/api/applicants/**").hasAnyRole("USER", "RECRUITER", "ADMIN") 
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

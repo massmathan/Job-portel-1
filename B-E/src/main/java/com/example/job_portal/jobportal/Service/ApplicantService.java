@@ -1,20 +1,26 @@
 package com.example.job_portal.jobportal.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.ApplicantDto;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
-import com.example.job_portal.jobportal.Repository.UserRepository;
-
 import com.example.job_portal.jobportal.Repository.ApplicationRepository;
+import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.module.Applicant;
 import com.example.job_portal.jobportal.module.Application;
 import com.example.job_portal.jobportal.module.User;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
  
 
 @Service
+@RequiredArgsConstructor
+
 public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
@@ -22,7 +28,7 @@ public class ApplicantService {
     private UserRepository userRepository;
 
     private EmailService emailService;
-
+    @Autowired
     public ApplicantService(ApplicantRepository applicantRepository,
                             ApplicationRepository applicationRepository,EmailService emailService,UserRepository userRepository) {
         this.applicantRepository = applicantRepository;
@@ -67,29 +73,37 @@ public class ApplicantService {
         return dto;
     }
 
+    @Transactional
     public Applicant submitApplication(Applicant applicant, Long recruiterId) {
-        // Save applicant
         User recruiter = userRepository.findById(recruiterId)
-                                    .orElseThrow(() -> new RuntimeException("Recruiter not found"));
-        applicant.setRecruiter(recruiter);  // link recruiter to applicant
+                .orElseThrow(() -> new RuntimeException("Recruiter not found with id " + recruiterId));
+
+        applicant.setRecruiter(recruiter);
 
         Applicant saved = applicantRepository.save(applicant);
+        System.out.println("Applicant saved successfully with id={}"+saved.getId());
 
-        // Email to applicant
-        emailService.sendEmail(
-                applicant.getEmail(),
-                "Application Submitted",
-                "Dear " + applicant.getName() + ",\n\n" +
-                "Your application for '" + applicant.getJobTitle() + "' has been received."
-        );
+        try {
+            emailService.sendEmail(
+                    applicant.getEmail(),
+                    "Application Submitted",
+                    "Dear " + applicant.getName() + ",\n\n" +
+                    "Your application for '" + applicant.getJobTitle() + "' has been received."
+            );
+        } catch (Exception e) {
+            System.out.println("Error sending email to applicant {}: {}"+applicant.getEmail()+ e.getMessage());
+        }
 
-        // Email to recruiter
-        emailService.sendEmail(
-                recruiter.getEmail(),
-                "New Application Received",
-                "Hello " + recruiter.getUsername() + ",\n\n" +
-                "You have received a new application for '" + applicant.getJobTitle() + "'."
-        );
+        try {
+            emailService.sendEmail(
+                    recruiter.getEmail(),
+                    "New Application Received",
+                    "Hello " + recruiter.getUsername() + ",\n\n" +
+                    "You have received a new application for '" + applicant.getJobTitle() + "'."
+            );
+        } catch (Exception e) {
+            System.out.println("Error sending email to recruiter {}: {}"+ recruiter.getEmail()+ e.getMessage());
+        }
 
         return saved;
     }
@@ -101,7 +115,7 @@ public class ApplicantService {
     }
 
     public List<Applicant> getAllApplicants() {
-        return applicantRepository.findAll();
+        return applicantRepository.findByOrderByCreatedDateDesc();
     }
 
     public List<Applicant> getAll() {
@@ -122,6 +136,13 @@ public class ApplicantService {
                 .orElseThrow(() -> new RuntimeException("Applicant not found"));
         System.out.println("Updating status for applicant ID: " + id + " to " + status);
         applicant.setStatus(status);
+        if ("Hired".equalsIgnoreCase(status)) {
+            applicant.setHireDate(LocalDateTime.now());
+        }else if("INTERVIEW".equalsIgnoreCase(status)){
+            applicant.setInterviewDate(LocalDateTime.now());
+        }
         return applicantRepository.save(applicant);
     }
+
+ 
 }

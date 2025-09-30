@@ -1,9 +1,18 @@
 package com.example.job_portal.jobportal.module;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "applicants")
@@ -24,11 +33,11 @@ public class Applicant {
 
     private String resume;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_id", nullable = false)
     private Jobs job;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recruiter_id")
     private User recruiter;
 
@@ -37,7 +46,13 @@ public class Applicant {
 
     @CreatedDate
     @Column(name = "created_date", updatable = false)
-    private LocalDate createdDate = LocalDate.now();
+    private LocalDateTime  createdDate = LocalDateTime.now();
+
+    @Column(name = "hire_date")
+    private LocalDateTime hireDate;
+
+     @Column(name = "interview_date")
+    private LocalDateTime interviewDate;
 
     public Long getId() {
         return id;
@@ -103,11 +118,27 @@ public class Applicant {
         this.status = status;
     }
 
-    public LocalDate getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getHireDate() {
+        return hireDate;
+    }
+
+    public void setHireDate(LocalDateTime hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public LocalDateTime getInterviewDate() {
+        return interviewDate;
+    }
+
+    public void setInterviewDate(LocalDateTime interviewDate) {
+        this.interviewDate = interviewDate;
     }
 }

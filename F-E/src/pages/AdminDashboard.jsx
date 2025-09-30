@@ -11,6 +11,21 @@ const AdminDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+
+
   const [metrics, setMetrics] = useState({
     totalUsers: 0,
     totalRecruiters: 0,
@@ -21,13 +36,11 @@ const AdminDashboard = () => {
   const [recentApplications, setRecentApplications] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
 
-  // open modal with selected user
   const handleEditUser = (user) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
-  // save edited user
   const handleSaveUser = () => {
     axios
       .put(
@@ -68,7 +81,8 @@ const AdminDashboard = () => {
       .get("http://localhost:8080/api/admin/latest-applications", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .then((res) => setRecentApplications(res.data))
+      .then((res) => {
+        console.log(res.data);setRecentApplications(res.data)})
       .catch((err) => console.error(err));
 
     axios
@@ -81,10 +95,12 @@ const AdminDashboard = () => {
 
   return (
     <div className="container py-4">
+  
+
       <h2 className="fw-bold mb-4 text-center">Admin Dashboard</h2>
 
       {/* Top Metrics */}
-      <Row className="mb-4">
+      <Row className="mb-4 ">
         <Col>
           <Card className="text-center p-3 shadow-sm">
             <h5>Total Users</h5>
@@ -110,25 +126,28 @@ const AdminDashboard = () => {
           </Card>
         </Col>
       </Row>
+      
 
       {/* Latest Users */}
       <h4 className="mt-4 mb-3">Recent Users</h4>
-      <Table striped hover responsive>
+      <Table striped hover  responsive >
         <thead>
-          <tr>
+          <tr className="text-capitalize">
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
             <th>Actions</th>
+            <th>CreateAt</th>
+
           </tr>
         </thead>
         <tbody>
           {recentUsers.map((user) => (
             <tr key={user.id}>
-              <td>{user.username}</td>
+              <td className="text-capitalize">{user.username}</td>
               <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
+              <td className="text-capitalize">{user.role}</td>
+              <td className="text-capitalize">
                 <Button
                   size="sm"
                   variant="outline-primary"
@@ -140,6 +159,8 @@ const AdminDashboard = () => {
                   Deactivate
                 </Button>
               </td>
+              <td>{formatDate(user.createdAt)}</td>
+
             </tr>
           ))}
         </tbody>
@@ -149,21 +170,22 @@ const AdminDashboard = () => {
       <h4 className="mt-4 mb-3">Recent Applications</h4>
       <Table striped hover responsive>
         <thead>
-          <tr>
+          <tr className="text-capitalize">
             <th>Applicant</th>
             <th>Email</th>
             <th>Job Title</th>
             <th>Status</th>
             <th>Resume</th>
+            <th>CreateAt</th>
           </tr>
         </thead>
         <tbody>
           {recentApplications.map((app) => (
             <tr key={app.id}>
-              <td>{app.name}</td>
+              <td className="text-capitalize">{app.name}</td>
               <td>{app.email}</td>
-              <td>{app.jobTitle}</td>
-              <td>
+              <td className="text-capitalize">{app.jobTitle}</td>
+              <td className="text-capitalize">
                 <Badge
                   bg={
                     app.status === "Hired"
@@ -172,11 +194,14 @@ const AdminDashboard = () => {
                       ? "danger"
                       : "info"
                   }
+                  text="dark"
+                  
+                  className="p-2"
                 >
                   {app.status}
                 </Badge>
               </td>
-              <td>
+              <td className="text-capitalize">
                 <Button
                   size="sm"
                   variant="link"
@@ -187,6 +212,8 @@ const AdminDashboard = () => {
                   View Resume
                 </Button>
               </td>
+            <td>{formatDate(app.createdDate)}</td>
+
             </tr>
           ))}
         </tbody>

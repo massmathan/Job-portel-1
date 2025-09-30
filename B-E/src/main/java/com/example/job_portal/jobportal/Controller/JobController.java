@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.JobDto;
-import com.example.job_portal.jobportal.Repository.CompanyRepository;
 import com.example.job_portal.jobportal.Service.CompanyService;
 import com.example.job_portal.jobportal.Service.JobService;
 import com.example.job_portal.jobportal.module.Companies;

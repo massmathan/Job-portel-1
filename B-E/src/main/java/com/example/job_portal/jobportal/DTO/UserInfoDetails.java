@@ -1,11 +1,11 @@
 package com.example.job_portal.jobportal.DTO;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import  org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.job_portal.jobportal.module.User;
 
@@ -17,9 +17,9 @@ public class UserInfoDetails implements UserDetails {
         this.user = user;
     }
 
-    @Override
+     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
     }
 
     @Override

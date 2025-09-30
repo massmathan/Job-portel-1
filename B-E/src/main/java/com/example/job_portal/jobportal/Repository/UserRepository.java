@@ -14,7 +14,7 @@ import com.example.job_portal.jobportal.module.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email); 
     long countByRole(String role);
-    List<User> findTop5ByOrderByCreatedAtDesc();
+    List<User> findTop10ByOrderByCreatedAtDesc();
     List<User> findByRole(String role);
 
 }

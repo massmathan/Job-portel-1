@@ -6,77 +6,62 @@ import { AuthContext } from "../AuthContext/AuthContext";
 export default function Navbars() {
   const { user, role, logout } = useContext(AuthContext);
 
-  // Menus for each role
-  const adminLinks = (
-    <>
-      <Nav.Link as={NavLink} to="/admin/dashboard" end>
-        Admin Dashboard
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/company-list">
-        Company List
-      </Nav.Link>
-        <Nav.Link as={NavLink} to="/job-form">
-        Post New Job
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/job-list">
-        All Jobs
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/applicants-list">
-        All Applicants
-      </Nav.Link>
-    </>
-  );
+  // Define role-based links in an object for easier management
+  const roleLinks = {
+    ADMIN: [
+      { to: "/admin/dashboard", label: "Admin Dashboard" },
+       { to: "/job-list", label: "All Jobs" },
+      { to: "/company-list", label: "Company List" },
+      { to: "/job-form", label: "Post New Job" },
+      { to: "/applicants-list", label: "All Applicants" },
+      { to: "/analytics", label: "Analytics" },
+    ],
+    RECRUITER: [
+      { to: "/recruiter/dashboard", label: "Recruiter Dashboard" },
+      //  { to: "/job-list", label: "All Jobs" },
+      { to: "/job-form", label: "Post New Job" },
+      { to: "/job-list", label: "View Your Jobs" },
+      { to: "/applicants-list", label: "Applicants" },
+      { to: "/analytics", label: "Analytics" },
+    ],
+    USER: [
+      { to: "/user/dashboard", label: "Dashboard" },
+      { to: "/job-list", label: "Browse Jobs" },
+      { to: "/applicants-list", label: "My Applications" },
+    ],
+  };
 
-  const recruiterLinks = (
-    <>
-      <Nav.Link as={NavLink} to="/recruiter/dashboard" end>
-        Recruiter Dashboard
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/job-form">
-        Post New Job
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/job-list">
-        View Your Jobs
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/applicants-list">
-        Applicants
-      </Nav.Link>
-    </>
-  );
-
-  const applicantLinks = (
-    <>
-      <Nav.Link as={NavLink} to="/user/dashboard" end>
-        Dashboard
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/job-list">
-        Browse Jobs
-      </Nav.Link>
-      <Nav.Link as={NavLink} to="/applicants-list">
-        My Applications
-      </Nav.Link>
-    </>
-  );
+  const linksToRender = user && roleLinks[role] ? roleLinks[role] : [];
 
   return (
-    <Navbar bg="light" expand="lg" className="mb-4">
-      <Container>
+   <Navbar bg="" expand="lg" className="mb-4">
+      <Container className="Container">
+        {/* Logo */}
         <Navbar.Brand as={NavLink} to="/dashboard">
           <img src="/logoimg.png" alt="logo" width={80} height={60} />
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="main-navbar" />
-        <Navbar.Collapse id="main-navbar">
-          <Nav className="me-auto">
-            {/* Switch menus by role */}
-            {user && role === "ADMIN" && adminLinks}
-            {user && role === "RECRUITER" && recruiterLinks}
-            {user && role === "USER" && applicantLinks}
 
-            {/* Account dropdown */}
-            {user && (
-              <NavDropdown title="Account" id="account-dropdown">
-                <NavDropdown.Item as={NavLink} to="/profile">
+        {/* Navbar Links */}
+        <Navbar.Collapse id="main-navbar">
+    <Nav className="NavManu ms-auto flex-column flex-lg-row w-100 justify-content-around ">
+            {linksToRender.map((link) => (
+              <Nav.Link
+                key={link.to}
+                as={NavLink}
+                to={link.to}
+                end
+                className="text-center text-light fs-6 px-3 py-2"
+              >
+                {link.label}
+              </Nav.Link>
+            ))}
+
+            {/* Account Dropdown */}
+            {user ? (
+              <NavDropdown title="Account" id="account-dropdown" align="end" className="text-center" >
+                <NavDropdown.Item as={NavLink} to="/profile" className="fs-6 px-3 py-2">
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item as={NavLink} to="/settings">
@@ -85,10 +70,7 @@ export default function Navbars() {
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
               </NavDropdown>
-            )}
-
-            {/* When no user logged in */}
-            {!user && (
+            ) : (
               <>
                 <Nav.Link as={NavLink} to="/signin">
                   Sign In

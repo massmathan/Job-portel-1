@@ -44,11 +44,8 @@ public class RecruiterService {
         return pipeline;
     }
 
-    public List<RecruiterDto> getRecentApplicants() {
-        return applicantRepo.findTop10ByOrderByIdDesc()
-                .stream()
-                .map(a -> new RecruiterDto(a.getId(), a.getName(), a.getJob().getTitle(), a.getStatus()))
-                .toList();
+    public List<Applicant> getRecentApplicants() {
+         return applicantRepo.findTop10ByOrderByCreatedDateDesc();
     }
 
     public void updateApplicantStage(Long applicantId, String status) {
@@ -57,4 +54,7 @@ public class RecruiterService {
         a.setStatus(status);
         applicantRepo.save(a);
     }
+
+    
+
 }

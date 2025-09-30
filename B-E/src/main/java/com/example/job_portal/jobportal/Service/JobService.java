@@ -39,7 +39,7 @@ public class JobService {
     }
 
      public List<Jobs> getAllJobs() {
-        List<Jobs> jobDetails = jobRepository.findAll();
+        List<Jobs> jobDetails = jobRepository.findByOrderByPostingDateDesc();
         return jobDetails; 
     }
 

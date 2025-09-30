@@ -1,11 +1,9 @@
 package com.example.job_portal.jobportal.module;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,7 +24,7 @@ public class Companies {
     
     private String logo;
 
-    public Long getId() {
+    public Long getId() {   
         return id;
     }
 

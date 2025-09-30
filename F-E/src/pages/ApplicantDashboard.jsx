@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Row, Col, Table, Badge } from "react-bootstrap";
+import { Card, Row, Col, Table, Badge, Form, Pagination } from "react-bootstrap";
 import axios from "axios";
 import { AuthContext } from "../AuthContext/AuthContext";
 
@@ -16,6 +16,10 @@ const ApplicantDashboard = () => {
 
   const [applications, setApplications] = useState([]);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   useEffect(() => {
     if (!token) return;
 
@@ -23,21 +27,25 @@ const ApplicantDashboard = () => {
 
     axios
       .get("http://localhost:8080/api/applicants/metrics", { headers })
-      .then(res => {
-        setMetrics(res.data);
-        console.log("Fetched Metrics");
-      })
+      .then(res => setMetrics(res.data))
       .catch(err => console.error(err));
 
     axios
       .get("http://localhost:8080/api/applicants/all", { headers })
-      .then(res => {
-        console.log(res.data);
-        setApplications(res.data);
-        console.log("Fetched Applications");
-      })
+      .then(res => setApplications(res.data))
       .catch(err => console.error(err));
   }, [token]);
+
+  // Calculate pagination
+  const indexOfLast = currentPage * rowsPerPage;
+  const indexOfFirst = indexOfLast - rowsPerPage;
+  const currentApplications = applications.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(applications.length / rowsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   return (
     <div className="container py-4">
@@ -71,8 +79,10 @@ const ApplicantDashboard = () => {
         </Col>
       </Row>
 
+     
+
       {/* Applications Table */}
-      <h4 className="mt-5 mb-3">My Applications</h4>
+      <h4 className="mt-2 mb-3">My Applications</h4>
       <Table striped bordered hover responsive>
         <thead className="table-dark">
           <tr>
@@ -83,17 +93,15 @@ const ApplicantDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {applications.length === 0 ? (
+          {currentApplications.length === 0 ? (
             <tr>
-              <td colSpan="4" className="text-center">
-                No applications found.
-              </td>
+              <td colSpan="4" className="text-center">No applications found.</td>
             </tr>
           ) : (
-            applications.map((app) => (
+            currentApplications.map(app => (
               <tr key={app.id}>
                 <td>{app.jobTitle}</td>
-                <td>{app['job']['companies'].companyName}</td>
+                <td>{app.job?.companies?.companyName || "-"}</td>
                 <td>
                   <Badge
                     bg={
@@ -107,16 +115,48 @@ const ApplicantDashboard = () => {
                     {app.status}
                   </Badge>
                 </td>
-                <td>
-                  {app.interviewDate
-                    ? new Date(app.interviewDate).toLocaleString()
-                    : "-"}
-                </td>
+                <td>{app.interviewDate ? new Date(app.interviewDate).toLocaleString() : "-"}</td>
               </tr>
             ))
           )}
         </tbody>
       </Table>
+
+      {/* Pagination */}
+      
+      {totalPages > 1 && (
+        <Pagination className="justify-content-center">
+           {/* Rows per page selector */}
+      {/* <Row className="mb-2 align-items-center"> */}
+        <Col sm={2} className="me-2">
+          <Form.Select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setCurrentPage(1); // reset page when rows change
+            }}
+          >
+            {[5, 10, 20, 50].map(num => (
+              <option key={num} value={num}>{num} rows</option>
+            ))}
+          </Form.Select>
+        </Col>
+      {/* </Row> */}
+          <Pagination.First onClick={() => handlePageChange(1)} />
+          <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Pagination.Item
+              key={i + 1}
+              active={i + 1 === currentPage}
+              onClick={() => handlePageChange(i + 1)}
+            >
+              {i + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} />
+          <Pagination.Last onClick={() => handlePageChange(totalPages)} />
+        </Pagination>
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.example.job_portal.jobportal.DTO.MetricsResponse;
 import com.example.job_portal.jobportal.DTO.RecruiterDto;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.RecruiterService;
+import com.example.job_portal.jobportal.module.Applicant;
 import com.example.job_portal.jobportal.module.User;
 
 
@@ -46,8 +48,8 @@ public class RecruiterController {
     }
 
     @GetMapping("/recent-applicants")
-    public List<RecruiterDto> getRecentApplicants() {
-        return recruiterService.getRecentApplicants();
+    public ResponseEntity<List<Applicant>> getRecentApplicants() {
+        return ResponseEntity.ok(recruiterService.getRecentApplicants());
     }
 
     @PostMapping("/update-stage")
@@ -63,5 +65,16 @@ public class RecruiterController {
         List<User> recruiters = userRepository.findByRole("RECRUITER");
         return ResponseEntity.ok(recruiters);
     }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<User> getRecruiterById(@PathVariable Long id) {
+            System.out.println("sacfsdzv d bxdfvdfv");
+
+            return userRepository.findById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        }
+
+
 
 }
