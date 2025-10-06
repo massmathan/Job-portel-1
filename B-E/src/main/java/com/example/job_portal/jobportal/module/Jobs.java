@@ -36,8 +36,11 @@ public class Jobs {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
-    
     private Companies companies;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "recruiter_id")
+    private User recruiter;
 
     private java.time.LocalDate postingDate = java.time.LocalDate.now();
 
@@ -121,6 +124,14 @@ public class Jobs {
 
     public void setCompanies(Companies companies) {
         this.companies = companies;
+    }
+
+    public User getRecruiter() {
+        return recruiter;
+    }
+
+    public void setRecruiter(User recruiter) {
+        this.recruiter = recruiter;
     }
 
   

@@ -2,11 +2,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { Table, Badge, Button } from "react-bootstrap";
 import axios from "axios";
 import { AuthContext } from "../../AuthContext/AuthContext";
+import ApiService from "../../Service/ApiService";
 
 function ApplicantList() {
   const [applications, setApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+      const { validateToken } = useContext(AuthContext) ;
 
   const { token, role, user } = useContext(AuthContext) ?? {
     token: localStorage.getItem("accessToken"),
@@ -14,11 +16,16 @@ function ApplicantList() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/applicants/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+
+    
+         validateToken(token);
+    // axios
+    //   .get("http://localhost:8080/api/applicants/all", {
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   })
+        ApiService.get("/applicants/all",0,{ headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
+        console.log("mathan");
         setApplications(res.data);
       })
       .catch((err) => console.error("Error fetching applications:", err));
@@ -30,9 +37,8 @@ function ApplicantList() {
         `http://localhost:8080/api/applicants/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      );  
 
-      // update UI immediately
       setApplications((prev) =>
         prev.map((app) =>
           app.id === id ? { ...app, status, hireDate: status === "Hired" ? new Date().toISOString() : app.hireDate } : app
@@ -43,7 +49,6 @@ function ApplicantList() {
     }
   };
 
-  // ✅ Format LocalDateTime (from backend or frontend-generated hireDate)
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -56,7 +61,6 @@ function ApplicantList() {
     });
   };
 
-  // ✅ Pagination logic
   const totalPages = Math.ceil(applications.length / itemsPerPage);
   const paginatedApps = applications.slice(
     (currentPage - 1) * itemsPerPage,

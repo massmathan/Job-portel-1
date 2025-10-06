@@ -20,6 +20,8 @@ public class JobDto {
 
     private Long companyId;
 
+    private Long recruiterId;
+
    
 
     public String getTitle() {
@@ -76,6 +78,14 @@ public class JobDto {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getRecruiterId() {
+        return recruiterId;
+    }
+
+    public void setRecruiterId(Long recruiterId) {
+        this.recruiterId = recruiterId;
     }
 
 

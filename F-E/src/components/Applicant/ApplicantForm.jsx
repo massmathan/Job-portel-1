@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../../AuthContext/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner ";
+import ApiService from "../../Service/ApiService";
 
 function ApplicantForm() {
   const [validated, setValidated] = useState(false);
@@ -18,15 +19,32 @@ function ApplicantForm() {
   const [recruiters, setRecruiters] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  
+
   const { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
+    const { validateToken } = useContext(AuthContext) ;
+
   const navigate = useNavigate();
 
   useEffect(() => {
+
+     validateToken(token);
     if (id) {
+
+        // ApiService.get("/job/get/",id,{headers: { Authorization: `Bearer ${token}` }})
+
+        axios.get(`http://localhost:8080/api/job/get/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {console.log(res.data);setRecruiters(res.data);setRecruiterId(res.data['recruiter']['id'])})
+      .catch(err => console.error(err));
+
+
       axios.get(`http://localhost:8080/api/recruiter/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then(res => {setRecruiters(res.data);setRecruiterId(id)})
+      // async ApiService.get("/recruiter/",id,{Authorization: `Bearer ${token}`})
+      .then(res => { console.log(res.data);setRecruiters(res.data);setRecruiterId(id) })
       .catch(err => console.error(err));
     }
 
@@ -96,7 +114,7 @@ function ApplicantForm() {
             <Form.Control type="text" placeholder="Enter your job title" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
           </FloatingLabel>
 
-          <Form.Select value={jobId} className="mb-3" onChange={e => setJobId(e.target.value)} required>
+          <Form.Select value={jobId} className="mb-3 p-3" onChange={e => setJobId(e.target.value)} required>
             <option value="">-- Select a job --</option>
             {jobs.map(job => <option key={job.id} value={job.id}>{job.title}</option>)}
           </Form.Select>

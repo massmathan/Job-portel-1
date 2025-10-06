@@ -22,9 +22,7 @@ public class JwtService {
     public static final String SECRET =
             "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
 
-    /**
-     * Generate token for an email/username.
-     */
+  
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, email);
@@ -100,9 +98,9 @@ public class JwtService {
         boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
 
         if (isValid) {
-            System.out.println("✅ Token is VALID for this user");
+            System.out.println("Token is VALID for this user");
         } else {
-            System.out.println("❌ Token is NOT valid for this user");
+            System.out.println(" Token is NOT valid for this user");
         }
         System.out.println("======================");
 

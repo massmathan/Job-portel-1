@@ -45,8 +45,8 @@ const handleEdit = (id) => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Actions</th>
             <th>Logo</th>
+            <th>Actions</th>
             <th>Company Name</th>
             <th>Address</th>
             <th>Website</th>
@@ -58,6 +58,18 @@ const handleEdit = (id) => {
             companies.map((company, index) => (
               <tr key={company.id}>
                 <td>{index + 1}</td>
+                 <td>
+                  {company.logo ? (
+                    <img
+                      src={`http://localhost:8080${company.logo}`}
+                      alt="Logo"
+                      style={{ width: "30px", height: "30px" }}
+                      
+                    />
+                  ) : (
+                    "No logo"
+                  )}
+                </td>
                  <td>
                   <button
                     className="btn btn-primary btn-sm me-2"
@@ -72,17 +84,7 @@ const handleEdit = (id) => {
                     Delete
                   </button>
                 </td>
-                <td>
-                  {company.logo ? (
-                    <img
-                      src={`http://localhost:8080/${company.logo}`}
-                      alt="Logo"
-                      style={{ width: "50px", height: "50px" }}
-                    />
-                  ) : (
-                    "No logo"
-                  )}
-                </td>
+               
                 <td>{company.companyName}</td>
                 <td>{company.address}</td>
                 <td>

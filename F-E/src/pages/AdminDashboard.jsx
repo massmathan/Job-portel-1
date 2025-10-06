@@ -31,6 +31,7 @@ const AdminDashboard = () => {
     totalRecruiters: 0,
     totalJobs: 0,
     totalApplications: 0,
+    totalCompanies: 0,
   });
 
   const [recentApplications, setRecentApplications] = useState([]);
@@ -69,7 +70,6 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    // metrics
     axios
       .get("http://localhost:8080/api/admin/metrics", {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -115,6 +115,12 @@ const AdminDashboard = () => {
         </Col>
         <Col>
           <Card className="text-center p-3 shadow-sm">
+            <h5>Total Companys</h5>
+            <h3>{metrics.totalCompanies}</h3>
+          </Card>
+        </Col>
+        <Col>
+          <Card className="text-center p-3 shadow-sm">
             <h5>Total Jobs</h5>
             <h3>{metrics.totalJobs}</h3>
           </Card>
@@ -125,6 +131,7 @@ const AdminDashboard = () => {
             <h3>{metrics.totalApplications}</h3>
           </Card>
         </Col>
+        
       </Row>
       
 

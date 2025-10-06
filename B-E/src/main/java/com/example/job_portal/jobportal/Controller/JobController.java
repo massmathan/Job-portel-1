@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.JobDto;
+import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.CompanyService;
 import com.example.job_portal.jobportal.Service.JobService;
+import com.example.job_portal.jobportal.Service.UserService;
 import com.example.job_portal.jobportal.module.Companies;
 import com.example.job_portal.jobportal.module.Jobs;
+import com.example.job_portal.jobportal.module.User;
+
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -31,10 +35,13 @@ public class JobController {
 
     private CompanyService companyService;
 
+    private UserService userService;
 
-    public JobController(JobService jobService, CompanyService companyService) {
+
+    public JobController(JobService jobService, CompanyService companyService,UserService userService) {
         this.jobService = jobService;
         this.companyService = companyService;
+        this.userService = userService;
     }
 
     @PostMapping("/create")
@@ -51,6 +58,12 @@ public class JobController {
         Long id = jobDto.getCompanyId(); 
         Companies companies = companyService.getCompanies(id);
         job.setCompanies(companies);
+
+        Long userId = jobDto.getRecruiterId(); 
+        User user = userService.getUser(userId);
+        job.setRecruiter(user);
+
+        job.setCreateBy(user.getUsername());
 
         String msg = jobService.create(job);
         return ResponseEntity.status(HttpStatus.CREATED).body(msg);
@@ -79,6 +92,7 @@ public class JobController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Jobs> getJobs(@PathVariable Long id) {
+        System.out.println(id);
         Jobs Jobs = jobService.getJob(id);
         return ResponseEntity.ok(Jobs);
     }

@@ -14,15 +14,24 @@ function JobPostForm() {
   const [salary, setSalary] = useState("");
   const [skills, setSkills] = useState("");
   const [jobType, setJobType] = useState("");
-  const [companyId, setCompanyId] = useState("");
+  const [companyId, setCompanyId] = useState("");  
+  const [recruiterId, setRecruiterId] = useState(0);
+
+
      const [companys, setCompanys] = useState([]);
 
   const { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
   const { id } = useParams(); 
   const navigate = useNavigate();
+  const { userId } = useContext(AuthContext) ??  localStorage.getItem("userId") ;
+
+  console.log(userId);
+
+
 
   // Load job data if editing
   useEffect(() => {
+      setRecruiterId(userId);
     axios
       .get("http://localhost:8080/api/company/getAll", {
         headers: { Authorization: `Bearer ${token}` }
@@ -45,6 +54,9 @@ function JobPostForm() {
           setSkills(job.skills);
           setJobType(job.jobType);
           setCompanyId(job[0].id);
+          setRecruiterId(job[0].id);
+
+
         })
         .catch(err => console.error(err));
     }
@@ -62,7 +74,7 @@ function JobPostForm() {
 
     setValidated(true);
 
-    const JobPostDetails = { title, description, location, jobType, salary,  skills: skills.split(",").map(s => s.trim()), companyId: Number(companyId)  };
+    const JobPostDetails = { title, description, location, jobType, salary,  skills: skills.split(",").map(s => s.trim()), companyId: Number(companyId) ,recruiterId: Number(recruiterId) };
     console.log(JobPostDetails);
     try {
       console.log("Submitting JobPostDetails:", JobPostDetails);
@@ -92,7 +104,6 @@ function JobPostForm() {
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
 
          <Form.Group controlId="companyId">
-          {/* <FloatingLabel label="Select Job" className="mb-3"> */}
             <Form.Select
               value={companyId} className="mb-3 p-3"
               onChange={(e) => setCompanyId(e.target.value)}
@@ -101,11 +112,9 @@ function JobPostForm() {
               {companys.map((company) => (
                 <option key={company.id} value={company.id}>
                   {company.companyName}
-                  {/* (ID: {job.id}) */}
                 </option>
               ))}
             </Form.Select>
-          {/* </FloatingLabel> */}
         </Form.Group>
 
           <Form.Group controlId="title">
@@ -121,7 +130,16 @@ function JobPostForm() {
             </FloatingLabel>
           </Form.Group>
 
-          <Form.Group controlId="description">
+          <Form.Group controlId="recruiterId">
+              <Form.Control
+                type="hidden"
+                placeholder="recruiterId"
+                value={recruiterId}
+                onChange={(e) => setRecruiterId(e.target.value)}
+              />
+          </Form.Group>
+
+            <Form.Group controlId="">
             <FloatingLabel label="Description" className="mb-3">
               <Form.Control
                 as="textarea"
@@ -146,8 +164,11 @@ function JobPostForm() {
             </FloatingLabel>
           </Form.Group>
 
+          
+          
+
           <Form.Group controlId="jobType" className="mb-3">
-            <Form.Select className=" p-3"
+            <Form.Select className="p-3"
               value={jobType}
               onChange={(e) => setJobType(e.target.value)}
               required

@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useContext, useState } from 'react';
 import axios from "axios";
-import { AuthContext } from '../../AuthContext/AuthContext';
+import { AuthContext } from '../AuthContext';
 import { useNavigate  } from 'react-router-dom';
 
 function SignIn() {

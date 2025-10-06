@@ -97,7 +97,7 @@ const RecruiterDashboard = () => {
         {Object.entries(metrics).map(([key, value]) => (
           <Col key={key}>
             <Card className="text-center p-3 shadow-sm">
-              <h5>{key.replace(/([A-Z])/g, " $1")}</h5>
+              <h5 className="text-capitalize">{key.replace(/([A-Z])/g, " $1")}</h5>
               <h3>{value}</h3>
             </Card>
           </Col>

@@ -17,5 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findTop10ByOrderByCreatedAtDesc();
     List<User> findByRole(String role);
 
+
 }
 

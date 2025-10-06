@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import SignUp from "../components/Auth/SignUp";
-import SignIn from "../components/Auth/SignIn";
+import SignUp from "../AuthContext/Auth/SignUp";
+import SignIn from "../AuthContext/Auth/SignIn";
 import CompanyForm from "../components/Company/CompanyForm";
 import JobPostForm from "../components/Job/JobPostForm";
 import CompanyTable from "../components/Company/CompanyList";
@@ -21,7 +21,7 @@ function AppRouters() {
               <PrivateRoute>
                 <DashboardLayout />
               </PrivateRoute>
-            }
+            } 
           />
 
         <Route path="/" element={<SignIn />} />

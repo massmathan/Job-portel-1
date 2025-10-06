@@ -6,6 +6,8 @@ public class AdminMetricsDTO {
     private long totalJobs;
     private long totalApplications;
 
+    private long totalCompanies;
+
 
     public long getTotalUsers() { return totalUsers; }
     public void setTotalUsers(long totalUsers) { this.totalUsers = totalUsers; }
@@ -18,4 +20,12 @@ public class AdminMetricsDTO {
 
     public long getTotalApplications() { return totalApplications; }
     public void setTotalApplications(long totalApplications) { this.totalApplications = totalApplications; }
+
+    public long getTotalCompanies() {
+        return totalCompanies;
+    }
+
+    public void setTotalCompanies(long totalCompanies) {
+        this.totalCompanies = totalCompanies;
+    }
 }

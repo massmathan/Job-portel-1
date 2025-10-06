@@ -4,11 +4,12 @@ import { jwtDecode } from "jwt-decode";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(localStorage.getItem("user") || null);
   const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
   const [role, setRole] = useState(localStorage.getItem("role") || null);
+    const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
 
-  // Load token from localStorage on mount
+
   useEffect(() => {
     
     const savedToken = localStorage.getItem("accessToken");
@@ -37,11 +38,19 @@ export function AuthProvider({ children }) {
       if (userData && userData.users) {
         const userObj = userData.users;
         localStorage.setItem("accessToken", token);
+        console.log(userData);
         localStorage.setItem("role", userObj.role);
+        localStorage.setItem("user", userObj);
+        localStorage.setItem("userId", userObj.id);
+
 
         setUser(userObj);
+        
+        console.log(userObj);
         setToken(token);
         setRole(userObj.role);
+        setUserId(userObj.id);
+        // console.log(userObj.role);
 
         console.log("[AuthContext] Logged in user role:", userObj.role);
       } 
@@ -59,6 +68,8 @@ export function AuthProvider({ children }) {
     }
 
     console.log("[AuthContext] localStorage accessToken:", localStorage.getItem("accessToken"));
+        console.log("[AuthContext] localStorage accessToken:", localStorage.getItem("user"));
+
     console.log("=== LOGIN END ===");
   };
 
@@ -72,11 +83,15 @@ export function AuthProvider({ children }) {
     console.log("role state:", role);
     console.log("token state:", token);
 
+    localStorage.removeItem("userId");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("role");
+    localStorage.removeItem("user");
+
     setUser(null);
     setRole(localStorage.getItem("role"));
     setToken(localStorage.getItem("accessToken"));
+    setUserId(localStorage.getItem("userId"));
 
     console.log("After logout:");
     console.log("accessToken (storage):", localStorage.getItem("accessToken"));
@@ -87,8 +102,27 @@ export function AuthProvider({ children }) {
     console.log("=== LOGOUT END ===");
   };
 
+
+const validateToken = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000; // in seconds
+
+    if (decoded.exp && decoded.exp < currentTime) {
+      console.log("Token expired");
+      return false;
+    }
+
+    console.log("Token is valid:", decoded);
+    return true;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return false;
+  }
+};
+
   return (
-    <AuthContext.Provider value={{ user, token, role, login, logout }}>
+    <AuthContext.Provider value={{ user, token, role, userId, validateToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

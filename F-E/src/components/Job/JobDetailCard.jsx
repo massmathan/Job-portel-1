@@ -1,17 +1,32 @@
-import React from "react";
-import { Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from "../../AuthContext/AuthContext";
 
-const JobCard = ({ job, handleSaveJob }) => {
 
-    const navigate = useNavigate();
+const JobDetailCard = ({handleSaveJob }) => {
+  const { id } = useParams();
+  const { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    console.log(job);
-  
-  function onViewDetails(id) {
-  alert(`Job ID: ${id}`);
-  navigate(`/job-view/${id}`);
-}
+  useEffect(() => {
+    if (!id) return;
+
+    axios
+      .get(`http://localhost:8080/api/job/get/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setJob(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching job details:", err);
+        setLoading(false);
+      });
+  }, [id, token]);
 
 
   return (
@@ -20,8 +35,6 @@ const JobCard = ({ job, handleSaveJob }) => {
       style={{
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
       }}
-
-
     >
       <div className="mb-3">
         <h3 className="fw-bold mb-1">{job?.title || "Untitled Job"}</h3>
@@ -83,6 +96,19 @@ const JobCard = ({ job, handleSaveJob }) => {
         </div>
       )}
 
+      {/* Benefits */}
+      {job?.benefits?.length > 0 && (
+        <div className="mb-4">
+          <h5 className="fw-bold mb-2">Benefits</h5>
+          <ul className="text-muted">
+            {job.benefits.map((benefit, idx) => (
+              <li key={idx}>{benefit}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Actions */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <button
           className="btn btn-outline-primary px-3"
@@ -90,7 +116,6 @@ const JobCard = ({ job, handleSaveJob }) => {
         >
           <i className="bi bi-heart me-1"></i> Save
         </button>
-        <Button onClick={() => onViewDetails(job.id)}>View</Button>
         <Link to={`/apply/${job?.id || ""}`}>
           <button className="btn btn-primary px-3">
             <i className="bi bi-send me-1"></i> Apply Now
@@ -98,6 +123,7 @@ const JobCard = ({ job, handleSaveJob }) => {
         </Link>
       </div>
 
+      {/* Footer */}
       <div className="text-muted small">
         <i className="bi bi-calendar-event me-1"></i>
         Posted on{" "}
@@ -110,6 +136,7 @@ const JobCard = ({ job, handleSaveJob }) => {
           : "N/A"}
       </div>
 
+      {/* Hover effect */}
       <style>{`
         .job-card:hover {
           transform: translateY(-5px);
@@ -120,4 +147,4 @@ const JobCard = ({ job, handleSaveJob }) => {
   );
 };
 
-export default JobCard;
+export default JobDetailCard;

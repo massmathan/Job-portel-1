@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Row, Col, Table, Badge, Form, Pagination } from "react-bootstrap";
+import { Card, Row, Col, Table, Badge, Form, Pagination ,Button} from "react-bootstrap";
 import axios from "axios";
 import { AuthContext } from "../AuthContext/AuthContext";
 
 const ApplicantDashboard = () => {
   const context = useContext(AuthContext);
   const token = context?.token || localStorage.getItem("accessToken");
+    const itemsPerPage = 5;
+  const [applications, setApplications] = useState([]);
 
   const [metrics, setMetrics] = useState({
     totalApplications: 0,
@@ -14,9 +16,7 @@ const ApplicantDashboard = () => {
     rejections: 0,
   });
 
-  const [applications, setApplications] = useState([]);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -36,11 +36,14 @@ const ApplicantDashboard = () => {
       .catch(err => console.error(err));
   }, [token]);
 
-  // Calculate pagination
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentApplications = applications.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(applications.length / rowsPerPage);
+   const totalPages = Math.ceil(applications.length / itemsPerPage);
+  const paginatedApps = applications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -51,7 +54,7 @@ const ApplicantDashboard = () => {
     <div className="container py-4">
       <h2 className="fw-bold mb-4 text-center">Applicant Dashboard</h2>
 
-      {/* Metrics Cards */}
+
       <Row className="mb-4 g-3">
         <Col md={3}>
           <Card className="text-center p-3 shadow-sm">
@@ -81,7 +84,7 @@ const ApplicantDashboard = () => {
 
      
 
-      {/* Applications Table */}
+
       <h4 className="mt-2 mb-3">My Applications</h4>
       <Table striped bordered hover responsive>
         <thead className="table-dark">
@@ -122,41 +125,29 @@ const ApplicantDashboard = () => {
         </tbody>
       </Table>
 
-      {/* Pagination */}
+ 
       
-      {totalPages > 1 && (
-        <Pagination className="justify-content-center">
-           {/* Rows per page selector */}
-      {/* <Row className="mb-2 align-items-center"> */}
-        <Col sm={2} className="me-2">
-          <Form.Select
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
-              setCurrentPage(1); // reset page when rows change
-            }}
-          >
-            {[5, 10, 20, 50].map(num => (
-              <option key={num} value={num}>{num} rows</option>
-            ))}
-          </Form.Select>
-        </Col>
-      {/* </Row> */}
-          <Pagination.First onClick={() => handlePageChange(1)} />
-          <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} />
-          {Array.from({ length: totalPages }, (_, i) => (
-            <Pagination.Item
-              key={i + 1}
-              active={i + 1 === currentPage}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} />
-          <Pagination.Last onClick={() => handlePageChange(totalPages)} />
-        </Pagination>
-      )}
+    <div className="d-flex justify-content-center mt-3">
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          Prev
+        </Button>
+        <span className="mx-3">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

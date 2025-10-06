@@ -15,6 +15,7 @@ import ApplicantDashboard from "./ApplicantDashboard";
 import PrivateRoute from "../AuthContext/PrivateRoute";
 import { AuthContext } from "../AuthContext/AuthContext";
 import AnalyticsDashboard from "../components/AnalyticsDashboard";
+import JobDetailCard from "../components/Job/JobDetailCard";
 
 export default function DashboardLayout() {
     const { user, role, logout } = useContext(AuthContext);
@@ -39,6 +40,7 @@ export default function DashboardLayout() {
             <Route path="/job-form" element={<JobPostForm />} />
             <Route path="/job-form/:id" element={<JobPostForm />} />
             <Route path="/job-list" element={<JobList />} />
+            <Route path="/job-view/:id" element={<JobDetailCard />} />
           <Route path="/analytics" element={<AnalyticsDashboard />} />
 
             <Route path="/settings" element={<SettingsForm />} />

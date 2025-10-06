@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.AdminMetricsDTO;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
+import com.example.job_portal.jobportal.Repository.CompanyRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.module.Applicant;
@@ -18,13 +19,15 @@ public class AdminService {
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
     private final ApplicantRepository applicantRepository;
+    private final CompanyRepository companyRepository;
 
     public AdminService(UserRepository userRepository,
                         JobRepository jobRepository,
-                        ApplicantRepository applicantRepository) {
+                        ApplicantRepository applicantRepository,CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
         this.applicantRepository = applicantRepository;
+        this.companyRepository = companyRepository;
     }
 
     public AdminMetricsDTO getMetrics() {
@@ -33,6 +36,7 @@ public class AdminService {
         dto.setTotalRecruiters(userRepository.countByRole("RECRUITER"));
         dto.setTotalJobs(jobRepository.count());
         dto.setTotalApplications(applicantRepository.count());
+        dto.setTotalCompanies(companyRepository.count());
         return dto;
     }
 
