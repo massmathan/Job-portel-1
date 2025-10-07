@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.MetricsResponse;
 import com.example.job_portal.jobportal.DTO.RecruiterDto;
+import com.example.job_portal.jobportal.Module.Applicant;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
-import com.example.job_portal.jobportal.module.Applicant;
  
 
 

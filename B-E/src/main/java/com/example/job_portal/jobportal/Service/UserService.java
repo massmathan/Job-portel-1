@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.UserInfoDetails;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.UserRepository;
-import com.example.job_portal.jobportal.module.User;
 
 @Service
 public class UserService implements UserDetailsService {

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.job_portal.jobportal.module.Applicant;
+import com.example.job_portal.jobportal.Module.Applicant;
 
 @Repository
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {

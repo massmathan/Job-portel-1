@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 
 import java.time.LocalDateTime;
 
@@ -141,4 +141,13 @@ public class Applicant {
     public void setInterviewDate(LocalDateTime interviewDate) {
         this.interviewDate = interviewDate;
     }
+
+    @Override
+    public String toString() {
+        return "Applicant [id=" + id + ", name=" + name + ", email=" + email + ", jobTitle=" + jobTitle + ", resume="
+                + resume + ", job=" + job + ", recruiter=" + recruiter + ", status=" + status + ", createdDate="
+                + createdDate + ", hireDate=" + hireDate + ", interviewDate=" + interviewDate + "]";
+    }
+
+    
 }

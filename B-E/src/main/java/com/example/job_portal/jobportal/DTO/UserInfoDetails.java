@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import  org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.job_portal.jobportal.module.User;
+import com.example.job_portal.jobportal.Module.User;
 
 public class UserInfoDetails implements UserDetails {
 

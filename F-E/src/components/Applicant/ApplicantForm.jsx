@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, FloatingLabel } from "react-bootstrap";
-import axios from "axios";
 import { AuthContext } from "../../AuthContext/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner ";
 import ApiService from "../../Service/ApiService";
 
@@ -15,44 +14,51 @@ function ApplicantForm() {
   const [jobId, setJobId] = useState("");
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
-  const [recruiterId, setRecruiterId] = useState("");
+  const [recruiterId, setRecruiterId] = useState(0);
   const [recruiters, setRecruiters] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  
-
-  const { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
-    const { validateToken } = useContext(AuthContext) ;
+  let { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+   useEffect(() => {
+           
 
-     validateToken(token);
-    if (id) {
+    const fetchData = async () => {
+      try {
+      
+        if (id) {
+          const jobResponse = await ApiService.get(`/job/get/${id}`, {
+            Authorization: `Bearer ${token}`,
+          });
 
-        // ApiService.get("/job/get/",id,{headers: { Authorization: `Bearer ${token}` }})
+          // const jobResponse = await axios.get(`http://localhost:8080/api/job/get/${id}`, {
+          //   headers: { Authorization: `Bearer ${token}` },
+          // });
+          console.log(jobResponse.data);
+          setRecruiters(jobResponse.data);
+          setRecruiterId(jobResponse.data.recruiter.id); 
 
-        axios.get(`http://localhost:8080/api/job/get/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {console.log(res.data);setRecruiters(res.data);setRecruiterId(res.data['recruiter']['id'])})
-      .catch(err => console.error(err));
+          const recruiterResponse = await ApiService.get(`/recruiter/${jobResponse.data.recruiter.id}`, 
+            { Authorization: `Bearer ${token}` }
+        );
+          console.log(recruiterResponse.data);
+          setRecruiters(recruiterResponse.data);
+          setRecruiterId(Number(recruiterResponse.id)); 
+        }
 
+        const jobsResponse = await ApiService.get("/job/getAll", 
+           { Authorization: `Bearer ${token}` }
+        );
+        setJobs(jobsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // alert("An error occurred while fetching data. Check console for details.");
+      }
+    };
 
-      axios.get(`http://localhost:8080/api/recruiter/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      // async ApiService.get("/recruiter/",id,{Authorization: `Bearer ${token}`})
-      .then(res => { console.log(res.data);setRecruiters(res.data);setRecruiterId(id) })
-      .catch(err => console.error(err));
-    }
-
-    axios.get("http://localhost:8080/api/job/getAll", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then(res => setJobs(res.data))
-    .catch(err => console.error(err));
+    fetchData();
   }, [id, token]);
 
   const handleSubmit = async (event) => {
@@ -77,12 +83,11 @@ function ApplicantForm() {
     formData.append("recruiterId", recruiterId);
 
     try {
-      await axios.post("http://localhost:8080/api/applicants/apply", formData, {
-        headers: {
+      const response = await ApiService.post("/applicants/apply", formData,
+      {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
-        },
-      });
+        });
       alert("Application submitted!");
       setName(""); setEmail(""); setResume(null); setJobTitle(""); setJobId(""); setRecruiterId("");
       navigate("/applicants-list");

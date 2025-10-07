@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.AdminMetricsDTO;
 import com.example.job_portal.jobportal.DTO.UserRequest;
+import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.AdminService;
-import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.User;
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/api/admin")

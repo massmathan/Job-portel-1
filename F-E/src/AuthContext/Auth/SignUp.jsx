@@ -4,9 +4,9 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { useContext, useState } from 'react';
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/AuthContext';
+import ApiService from '../../Service/ApiService';
 
 
 
@@ -34,7 +34,7 @@ function SignUp() {
 
     setValidated(true);
 
-    const user = {
+    const userData = {
       username: `${firstName} ${lastName}`,
       email: email,
       password: confirmPassword,
@@ -42,8 +42,9 @@ function SignUp() {
     };
 
     try {
-      console.log(user);
-      const response = await axios.post("http://localhost:8080/api/auth/addNewUser", user);
+      console.log(userData);
+      const response = await ApiService.post('/auth/addNewUser',userData);
+
       console.log("Server Response:", response.data);
       const { accessToken, users  } = response.data;
 
@@ -52,10 +53,6 @@ function SignUp() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-  };
-
-  const handleEmailValidation = async (event) => {
-    console.log(event.target.value);
   };
 
 

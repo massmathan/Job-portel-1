@@ -5,6 +5,8 @@ import { useContext, useState } from 'react';
 import axios from "axios";
 import { AuthContext } from '../AuthContext';
 import { useNavigate  } from 'react-router-dom';
+import ApiService from "../../Service/ApiService";
+
 
 function SignIn() {
   const [validated, setValidated] = useState(false);
@@ -24,23 +26,20 @@ function SignIn() {
     };
 
     try {
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/generateTokens',
-        credentials
-      );
+     
+      const response = await ApiService.post("/auth/generateTokens", credentials);
 
       console.log("Server Response:", response.data);
 
       
       const { accessToken, users  } = response.data;
-
+      users.decodePassword = password ;
       login({users}, accessToken);
 
       console.log("Login successful, user:", users);
       navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting form:", error.response || error);
-      // TODO: show error message to the user
     }
   };
 

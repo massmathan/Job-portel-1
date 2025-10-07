@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.ApplicantDto;
+import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.Application;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.ApplicationRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
-import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.Application;
-import com.example.job_portal.jobportal.module.User;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

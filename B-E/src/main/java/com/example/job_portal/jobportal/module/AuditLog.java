@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -17,67 +19,70 @@ public class AuditLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long logId;
 
-    private Long userId;
-    private String username;
-    private String action;
-    private String entityName;
+    @Column(nullable = false)
+    private String eventType;
 
+    @Column(nullable = false)
+    private String entityType;
+
+    @Column(nullable = false)
     private Long entityId;
 
-    @Column(columnDefinition = "json")
-    private String oldValues;
+    private String oldValue;
 
-    @Column(columnDefinition = "json")
-    private String newValues;
+    @Lob
+    private String newValue;
+
+    @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 
     private String ipAddress;
+   
+    private String action;
 
-    @Column(columnDefinition = "text")
-    private String userAgent;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
+    public AuditLog(String action, Long entityId, String entityType, String eventType, String ipAddress, Long logId, String newValue, String oldValue, LocalDateTime timestamp, Long userId) {
+        this.action = action;
+        this.entityId = entityId;
+        this.entityType = entityType;
+        this.eventType = eventType;
+        this.ipAddress = ipAddress;
+        this.logId = logId;
+        this.newValue = newValue;
+        this.oldValue = oldValue;
+        this.timestamp = timestamp;
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public AuditLog() {
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public Long getLogId() {
+        return logId;
     }
 
-    public String getAction() {
-        return action;
+    public void setLogId(Long logId) {
+        this.logId = logId;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public String getEventType() {
+        return eventType;
     }
 
-    public String getEntityName() {
-        return entityName;
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 
-    public void setEntityName(String entityName) {
-        this.entityName = entityName;
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
     }
 
     public Long getEntityId() {
@@ -88,20 +93,36 @@ public class AuditLog {
         this.entityId = entityId;
     }
 
-    public String getOldValues() {
-        return oldValues;
+    public String getOldValue() {
+        return oldValue;
     }
 
-    public void setOldValues(String oldValues) {
-        this.oldValues = oldValues;
+    public void setOldValue(String oldValue) {
+        this.oldValue = oldValue;
     }
 
-    public String getNewValues() {
-        return newValues;
+    public String getNewValue() {
+        return newValue;
     }
 
-    public void setNewValues(String newValues) {
-        this.newValues = newValues;
+    public void setNewValue(String newValue) {
+        this.newValue = newValue;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getIpAddress() {
@@ -112,23 +133,25 @@ public class AuditLog {
         this.ipAddress = ipAddress;
     }
 
-    public String getUserAgent() {
-        return userAgent;
+    public String getAction() {
+        return action;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    @Override
+    public String toString() {
+        return "AuditLog [logId=" + logId + ", eventType=" + eventType + ", entityType=" + entityType + ", entityId="
+                + entityId + ", oldValue=" + oldValue + ", newValue=" + newValue + ", userId=" + userId + ", timestamp="
+                + timestamp + ", ipAddress=" + ipAddress + ", action=" + action + ", getClass()=" + getClass()
+                + ", getLogId()=" + getLogId() + ", getEventType()=" + getEventType() + ", getEntityType()="
+                + getEntityType() + ", getEntityId()=" + getEntityId() + ", getOldValue()=" + getOldValue()
+                + ", getNewValue()=" + getNewValue() + ", getUserId()=" + getUserId() + ", getTimestamp()="
+                + getTimestamp() + ", getIpAddress()=" + getIpAddress() + ", getAction()=" + getAction()
+                + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
     }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    
 
     
 }

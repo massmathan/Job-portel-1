@@ -36,14 +36,12 @@ export default function Navbars() {
   return (
    <Navbar bg="" expand="lg" className="mb-4">
       <Container className="Container">
-        {/* Logo */}
         <Navbar.Brand as={NavLink} to="/dashboard">
           <img src="/logoimg.png" alt="logo" width={80} height={60} />
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="main-navbar" />
 
-        {/* Navbar Links */}
         <Navbar.Collapse id="main-navbar">
     <Nav className="NavManu ms-auto flex-column flex-lg-row w-100 justify-content-around ">
             {linksToRender.map((link) => (
@@ -58,7 +56,6 @@ export default function Navbars() {
               </Nav.Link>
             ))}
 
-            {/* Account Dropdown */}
             {user ? (
               <NavDropdown title="Account" id="account-dropdown" align="end" className="text-center" >
                 <NavDropdown.Item as={NavLink} to="/profile" className="fs-6 px-3 py-2">

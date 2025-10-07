@@ -9,8 +9,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.job_portal.jobportal.Module.Companies;
 import com.example.job_portal.jobportal.Repository.CompanyRepository;
-import com.example.job_portal.jobportal.module.Companies;
 
 @Service
 public class CompanyService {

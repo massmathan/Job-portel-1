@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.MetricsResponse;
 import com.example.job_portal.jobportal.DTO.RecruiterDto;
+import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.RecruiterService;
-import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.User;
 
 
 

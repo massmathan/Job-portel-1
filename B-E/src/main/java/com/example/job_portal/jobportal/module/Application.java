@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;

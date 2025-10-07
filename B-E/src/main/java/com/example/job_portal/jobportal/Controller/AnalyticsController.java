@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.job_portal.jobportal.Module.Applicant;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
-import com.example.job_portal.jobportal.module.Applicant;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;

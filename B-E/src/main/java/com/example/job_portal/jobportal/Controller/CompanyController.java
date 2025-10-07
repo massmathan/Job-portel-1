@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.job_portal.jobportal.Module.Companies;
 import com.example.job_portal.jobportal.Service.CompanyService;
-import com.example.job_portal.jobportal.module.Companies;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

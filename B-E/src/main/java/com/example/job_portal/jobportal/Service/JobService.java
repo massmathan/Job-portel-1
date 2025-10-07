@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.job_portal.jobportal.Module.Jobs;
 import com.example.job_portal.jobportal.Repository.JobRepository;
-import com.example.job_portal.jobportal.module.Jobs;
 
 @Service
 public class JobService {
@@ -14,13 +14,9 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
     
-     public String create(Jobs jobDetails) {
-            try{
-                   Jobs savedJob = jobRepository.save(jobDetails);  
-                    return "Job created successfully with ID:" + savedJob.getId();
-            }catch(Exception e){
-                return "Job Not Created";
-            }   
+     public Long create(Jobs jobDetails) {
+            Jobs savedJob = jobRepository.save(jobDetails);  
+            return  savedJob.getId();
         }
 
 

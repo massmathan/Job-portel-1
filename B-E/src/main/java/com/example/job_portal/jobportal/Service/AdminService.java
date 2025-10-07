@@ -4,12 +4,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.job_portal.jobportal.DTO.AdminMetricsDTO;
+import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.CompanyRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
-import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.User;
 
 
 

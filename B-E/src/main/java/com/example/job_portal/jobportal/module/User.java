@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 
 import java.time.LocalDateTime;
 
@@ -52,4 +52,18 @@ public class User {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password + ", role="
+                + role + ", createdAt=" + createdAt + "]";
+    }
+
+
+
+  
+
+    
 }

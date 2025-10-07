@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 
 import java.util.List;
 
@@ -133,6 +133,27 @@ public class Jobs {
     public void setRecruiter(User recruiter) {
         this.recruiter = recruiter;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Jobs{");
+        sb.append("id=").append(id);
+        sb.append(", title=").append(title);
+        sb.append(", description=").append(description);
+        sb.append(", location=").append(location);
+        sb.append(", jobType=").append(jobType);
+        sb.append(", salary=").append(salary);
+        sb.append(", skills=").append(skills);
+        sb.append(", companies=").append(companies);
+        sb.append(", recruiter=").append(recruiter);
+        sb.append(", postingDate=").append(postingDate);
+        sb.append(", createBy=").append(createBy);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    
 
   
 

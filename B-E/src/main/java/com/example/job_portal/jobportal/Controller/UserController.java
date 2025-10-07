@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.DTO.AuthRequest;
 import com.example.job_portal.jobportal.DTO.UserRequest;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Service.JwtService;
 import com.example.job_portal.jobportal.Service.UserService;
-import com.example.job_portal.jobportal.module.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,14 +37,17 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public UserController(UserService userService,
                           JwtService jwtService,
-                          AuthenticationManager authenticationManager) {
+                          AuthenticationManager authenticationManager,PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/welcome")
@@ -54,6 +58,7 @@ public class UserController {
     @PostMapping("/generateTokens")
     public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         System.out.println("Authenticating user: " + authRequest.getEmail());
+        System.out.println("Authenticating user: " + authRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getEmail(),
@@ -75,6 +80,12 @@ public class UserController {
             System.out.println("Authentication failed for user: " + authRequest.getEmail());
             throw new UsernameNotFoundException("Invalid user request!");
         }
+    }
+
+    @PostMapping("/refreshTokens")
+    public ResponseEntity<?> authenticateAndRefreshToken(@RequestBody AuthRequest authRequest) {
+
+       return authenticateAndGetToken(authRequest);
     }
 
     @PostMapping("/addNewUser")

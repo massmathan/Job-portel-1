@@ -1,4 +1,4 @@
-package com.example.job_portal.jobportal.module;
+package com.example.job_portal.jobportal.Module;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

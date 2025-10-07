@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.job_portal.jobportal.DTO.ApplicantDto;
+import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.Application;
+import com.example.job_portal.jobportal.Module.Jobs;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Service.ApplicantService;
-import com.example.job_portal.jobportal.module.Applicant;
-import com.example.job_portal.jobportal.module.Application;
-import com.example.job_portal.jobportal.module.Jobs;
-import com.example.job_portal.jobportal.module.User;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

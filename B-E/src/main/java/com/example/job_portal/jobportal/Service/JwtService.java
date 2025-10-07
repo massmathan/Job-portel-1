@@ -33,7 +33,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30 min
+                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 10 * 1)) // 30 min
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
         System.out.println("[JWT] Generated Token for " + email + ": " + token);
@@ -93,9 +93,12 @@ public class JwtService {
         System.out.println("JWT Token: " + token);
         System.out.println("Extracted Username from token: " + username);
         System.out.println("UserDetails username: " + userDetails.getUsername());
-        System.out.println("Token expired? " + isTokenExpired(token));
+        // System.out.println("Token expired? " + isTokenExpired(token));
 
-        boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        boolean isValid = username.equals(userDetails.getUsername());
+
+        // boolean isValid = username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+
 
         if (isValid) {
             System.out.println("Token is VALID for this user");

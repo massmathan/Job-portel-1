@@ -5,75 +5,94 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.job_portal.jobportal.DTO.JobDto;
-import com.example.job_portal.jobportal.Repository.UserRepository;
+import com.example.job_portal.jobportal.Module.Companies;
+import com.example.job_portal.jobportal.Module.Jobs;
+import com.example.job_portal.jobportal.Module.User;
+import com.example.job_portal.jobportal.Service.AuditLogService;
 import com.example.job_portal.jobportal.Service.CompanyService;
 import com.example.job_portal.jobportal.Service.JobService;
 import com.example.job_portal.jobportal.Service.UserService;
-import com.example.job_portal.jobportal.module.Companies;
-import com.example.job_portal.jobportal.module.Jobs;
-import com.example.job_portal.jobportal.module.User;
-
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/job")
 public class JobController {
 
+    private final JobService jobService;
+    private final CompanyService companyService;
+    private final UserService userService;
+    private final AuditLogService auditLogService;
+
     @Autowired
-    private JobService jobService;
-
-    private CompanyService companyService;
-
-    private UserService userService;
-
-
-    public JobController(JobService jobService, CompanyService companyService,UserService userService) {
+    public JobController(JobService jobService, 
+                         CompanyService companyService, 
+                         UserService userService, 
+                         AuditLogService auditLogService) {
         this.jobService = jobService;
         this.companyService = companyService;
         this.userService = userService;
+        this.auditLogService = auditLogService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createJob(@RequestBody JobDto jobDto) {
-         Jobs job = new Jobs();
-        job.setTitle(jobDto.getTitle());
-        job.setDescription(jobDto.getDescription());
-        job.setLocation(jobDto.getLocation());
-        job.setJobType(jobDto.getJobType());
-        job.setSalary(jobDto.getSalary());
-        job.setSkills(jobDto.getSkills());
+    public ResponseEntity<String> createJob(@RequestBody JobDto jobDto) {
+        try {
+            Jobs jobDetails = new Jobs();
+            jobDetails.setTitle(jobDto.getTitle());
+            jobDetails.setDescription(jobDto.getDescription());
+            jobDetails.setLocation(jobDto.getLocation());
+            jobDetails.setJobType(jobDto.getJobType());
+            jobDetails.setSalary(jobDto.getSalary());
+            jobDetails.setSkills(jobDto.getSkills());
 
-       
-        Long id = jobDto.getCompanyId(); 
-        Companies companies = companyService.getCompanies(id);
-        job.setCompanies(companies);
+            Companies company = companyService.getCompanies(jobDto.getCompanyId());
+            jobDetails.setCompanies(company);
 
-        Long userId = jobDto.getRecruiterId(); 
-        User user = userService.getUser(userId);
-        job.setRecruiter(user);
+            User recruiter = userService.getUser(jobDto.getRecruiterId());
+            jobDetails.setRecruiter(recruiter);
+            jobDetails.setCreateBy(recruiter.getUsername());
 
-        job.setCreateBy(user.getUsername());
+            Long jobId = jobService.create(jobDetails);
 
-        String msg = jobService.create(job);
-        return ResponseEntity.status(HttpStatus.CREATED).body(msg);
+            auditLogService.logAction(
+                    "Job Posted",
+                    "Job Posting",
+                    jobId,
+                    null,
+                    jobDetails.toString(),
+                    recruiter.getId(),
+                    "0",
+                    "Create"
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Job successfully created.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editJob(@PathVariable Long id,
-                                       @RequestBody Jobs jobDetails) {
+    public ResponseEntity<String> editJob(@PathVariable Long id,
+                                          @RequestBody Jobs jobDetails) {
         try {
             String msg = jobService.editJob(id, jobDetails);
+
+            Long recruiterId = jobDetails.getRecruiter() != null ? jobDetails.getRecruiter().getId() : null;
+
+            auditLogService.logAction(
+                    "Job Updated",
+                    "Job Posting",
+                    id,
+                    null,
+                    jobDetails.toString(),
+                    recruiterId,
+                    "0",
+                    "Update"
+            );
+
             return ResponseEntity.ok(msg);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
@@ -81,27 +100,32 @@ public class JobController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteJobs(@PathVariable  Long id) {
+    public ResponseEntity<String> deleteJobs(@PathVariable Long id) {
         try {
             jobService.deleteJobs(id);
-            return ResponseEntity.ok("All Jobs deleted successfully.");
+            return ResponseEntity.ok("Job deleted successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting Jobs: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting job: " + e.getMessage());
         }
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Jobs> getJobs(@PathVariable Long id) {
-        System.out.println(id);
-        Jobs Jobs = jobService.getJob(id);
-        return ResponseEntity.ok(Jobs);
+        try {
+            Jobs job = jobService.getJob(id);
+            return ResponseEntity.ok(job);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-     @GetMapping("/getAll")
+    @GetMapping("/getAll")
     public ResponseEntity<List<Jobs>> getAllJobs() {
-        List<Jobs> Jobs = jobService.getAllJobs();
-        return ResponseEntity.ok(Jobs);
+        try {
+            List<Jobs> jobs = jobService.getAllJobs();
+            return ResponseEntity.ok(jobs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
-     
 }
