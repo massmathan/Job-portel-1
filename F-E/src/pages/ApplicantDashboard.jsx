@@ -6,8 +6,11 @@ import { AuthContext } from "../AuthContext/AuthContext";
 const ApplicantDashboard = () => {
   const context = useContext(AuthContext);
   const token = context?.token || localStorage.getItem("accessToken");
-    const itemsPerPage = 5;
+    
   const [applications, setApplications] = useState([]);
+
+      const { userId } = useContext(AuthContext) ?? { token: localStorage.getItem("userId") };
+  
 
   const [metrics, setMetrics] = useState({
     totalApplications: 0,
@@ -16,9 +19,9 @@ const ApplicantDashboard = () => {
     rejections: 0,
   });
 
-
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     if (!token) return;
@@ -26,12 +29,12 @@ const ApplicantDashboard = () => {
     const headers = { Authorization: `Bearer ${token}` };
 
     axios
-      .get("http://localhost:8080/api/applicants/metrics", { headers })
+      .get(`http://localhost:8080/api/applicants/metrics/${userId}`, { headers })
       .then(res => setMetrics(res.data))
       .catch(err => console.error(err));
 
     axios
-      .get("http://localhost:8080/api/applicants/all", { headers })
+      .get(`http://localhost:8080/api/applicants/all/${userId}`, { headers })
       .then(res => setApplications(res.data))
       .catch(err => console.error(err));
   }, [token]);

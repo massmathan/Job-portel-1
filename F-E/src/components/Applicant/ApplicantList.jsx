@@ -7,10 +7,11 @@ import ApiService from "../../Service/ApiService";
 function ApplicantList() {
   const [applications, setApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-      const { validateToken } = useContext(AuthContext) ;
+  const itemsPerPage = 10;
+      const {  } = useContext(AuthContext) ;
 
-  const { token, role, user } = useContext(AuthContext) ?? {
+
+  const { token, role, user ,validateToken, userId} = useContext(AuthContext) ?? {
     token: localStorage.getItem("accessToken"),
     role: localStorage.getItem("role"),
   };
@@ -23,9 +24,10 @@ function ApplicantList() {
     //   .get("http://localhost:8080/api/applicants/all", {
     //     headers: { Authorization: `Bearer ${token}` },
     //   })
-        ApiService.get("/applicants/all",0,{ headers: { Authorization: `Bearer ${token}` } })
+        ApiService.get(`/applicants/all/${userId}`, 
+            { Authorization: `Bearer ${token}` })
       .then((res) => {
-        console.log("mathan");
+        console.log("mathan",res.data);
         setApplications(res.data);
       })
       .catch((err) => console.error("Error fetching applications:", err));
@@ -41,7 +43,7 @@ function ApplicantList() {
 
       setApplications((prev) =>
         prev.map((app) =>
-          app.id === id ? { ...app, status, hireDate: status === "Hired" ? new Date().toISOString() : app.hireDate } : app
+          app.id === id ? { ...app, status, hireDate: ((status === "Hired")||(status === "Receive")||(status === "inprocess")||(status === "Interview")||(status === "Rejected")) ? new Date().toISOString() : app.hireDate } : app
         )
       );
     } catch (err) {
@@ -80,8 +82,12 @@ function ApplicantList() {
             <th>Recruiter</th>
             <th>Status</th>
             <th>Resume</th>
+            <th>receive date</th>
+            <th>Inprocess date</th>
+            <th>Interview date</th>
+            <th>Hired date</th>
+            <th>Rejected date</th>
             <th>Created At</th>
-            <th>Hired At</th>
             {user && (role === "ADMIN" || role === "RECRUITER") && <th>Actions</th>}
           </tr>
         </thead>
@@ -121,7 +127,6 @@ function ApplicantList() {
                       );
 
                       if (!res.ok) throw new Error("Failed to fetch resume");
-
                       const blob = await res.blob();
                       const url = window.URL.createObjectURL(blob);
                       window.open(url, "_blank"); // open PDF in new tab
@@ -134,11 +139,30 @@ function ApplicantList() {
                   View Resume
                 </Button>
               </td>
+              <td>{app.status === "Receive" || role === "USER" ? (formatDate(app.receiveDate)) ? formatDate(app.receiveDate) : "-" : "-"}</td>
+              <td>{app.status === "inprocess" || role === "USER" ? (formatDate(app.inProcessDate)) ? formatDate(app.inProcessDate) : "-" : "-"}</td>
+              <td>{app.status === "Interview" || role === "USER" ? (formatDate(app.interviewDate)) ? formatDate(app.inProcessDate) : "-" : "-"}</td>
+              <td>{app.status === "Hired" || role === "USER" ? (formatDate(app.hireDate)) ? formatDate(app.hireDate) : "-" : "-"}</td>
+              <td>{app.status === "Rejected" || role === "USER" ? (formatDate(app.rejectedDate)) ? formatDate(app.rejectedDate) : "-" : "-"}</td> 
               <td>{formatDate(app.createdDate)}</td>
-              <td>{app.status === "Hired" ? formatDate(app.hireDate) : "-"}</td>
               {user && (role === "ADMIN" || role === "RECRUITER") && (
+
                 <td>
                   <div className="d-flex gap-1">
+                     <Button
+                      size="sm"
+                      variant="info"
+                      onClick={() => handleStageChange(app.id, "Receive")}
+                    >
+                      Receive
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="info"
+                      onClick={() => handleStageChange(app.id, "inprocess")}
+                    >
+                      InProcess
+                    </Button>
                     <Button
                       size="sm"
                       variant="info"
@@ -162,7 +186,9 @@ function ApplicantList() {
                     </Button>
                   </div>
                 </td>
+
               )}
+            
             </tr>
           ))}
         </tbody>

@@ -114,20 +114,18 @@ const validateToken = (token) => {
     console.log("currentTime",currentTime);
     if (decoded.exp && decoded.exp < currentTime) {
       if(decoded.exp && ( decoded.exp + 1000 ) > currentTime ){
-              console.log("New Token Genereted");
+            console.log("New Token Genereted");
             console.log("decoded ",decoded.exp);
             console.log("after",currentTime);
             return {isFlag:false,redirect:false}; 
       }
       else{
-                    console.log("decoded ",decoded.exp);
-
+            console.log("decoded ",decoded.exp);
             console.log("Token expired");
             return {isFlag:false,redirect:true}; 
           // navigate("/signin");
       }
     }
-
     console.log("Token is valid:", decoded);
     return {isFlag:true,redirect:false};
   } catch (error) {

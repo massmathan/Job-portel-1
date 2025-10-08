@@ -51,8 +51,14 @@ public class Applicant {
     @Column(name = "hire_date")
     private LocalDateTime hireDate;
 
-     @Column(name = "interview_date")
+    @Column(name = "interview_date")
     private LocalDateTime interviewDate;
+
+    private LocalDateTime rejectedDate;
+
+    private LocalDateTime inProcessDate;
+
+    private LocalDateTime receiveDate;
 
     public Long getId() {
         return id;
@@ -142,11 +148,37 @@ public class Applicant {
         this.interviewDate = interviewDate;
     }
 
+    
+
     @Override
     public String toString() {
         return "Applicant [id=" + id + ", name=" + name + ", email=" + email + ", jobTitle=" + jobTitle + ", resume="
                 + resume + ", job=" + job + ", recruiter=" + recruiter + ", status=" + status + ", createdDate="
                 + createdDate + ", hireDate=" + hireDate + ", interviewDate=" + interviewDate + "]";
+    }
+
+    public LocalDateTime getRejectedDate() {
+        return rejectedDate;
+    }
+
+    public void setRejectedDate(LocalDateTime rejectedDate) {
+        this.rejectedDate = rejectedDate;
+    }
+
+    public LocalDateTime getInProcessDate() {
+        return inProcessDate;
+    }
+
+    public void setInProcessDate(LocalDateTime inProcessDate) {
+        this.inProcessDate = inProcessDate;
+    }
+
+    public LocalDateTime getReceiveDate() {
+        return receiveDate;
+    }
+
+    public void setReceiveDate(LocalDateTime receiveDate) {
+        this.receiveDate = receiveDate;
     }
 
     

@@ -31,9 +31,9 @@ const JobList = () => {
   const filteredJobs = jobs.filter((job) => {
     return (
       (filters.location === "" || job.location?.toLowerCase().includes(filters.location.toLowerCase())) &&
-      (filters.company === "" || job.company?.toLowerCase().includes(filters.company.toLowerCase())) &&
+      (filters.company === "" || job.companies?.companyName.toLowerCase().includes(filters.company.toLowerCase())) &&
       (filters.jobType === "" || job.jobType?.toLowerCase() === filters.jobType.toLowerCase()) &&
-      (filters.salary === "" || job.salary >= parseInt(filters.salary)) &&
+      (filters.salary === "" || job.salary >= parseInt(filters.salary)) && 
       (filters.postingDate === "" || new Date(job.postingDate) >= new Date(filters.postingDate))
     );
   });

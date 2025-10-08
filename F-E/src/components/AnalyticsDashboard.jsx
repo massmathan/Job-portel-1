@@ -20,14 +20,19 @@ function AnalyticsDashboard() {
   const [timeToHire, setTimeToHire] = useState(0);
 
 
-  const auth = useContext(AuthContext);
+  const {auth, userId, role} = useContext(AuthContext);
+
   const token = auth?.token || localStorage.getItem("accessToken");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const API_BASE_URL = "http://localhost:8080/api/analytics";
+
+        const urlParam = (role == 'ADMIN') ? 0 : userId ;
+        console.log(" Mathan ",urlParam);
         const appsRes = await axios.get(
-          "http://localhost:8080/api/analytics/applications-per-job",
+          `${API_BASE_URL}/applications-per-job/${urlParam}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setApplicationsPerJob(
@@ -38,7 +43,7 @@ function AnalyticsDashboard() {
         );
 
         const trendRes = await axios.get(
-          "http://localhost:8080/api/analytics/job-trend",
+          `${API_BASE_URL}/job-trend/${urlParam}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setJobTrend(
@@ -49,7 +54,7 @@ function AnalyticsDashboard() {
         );
 
        const hireRes = await axios.get(
-        "http://localhost:8080/api/analytics/time-to-hire",
+        `${API_BASE_URL}/time-to-hire/${urlParam}`,
         { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log(hireRes.data);

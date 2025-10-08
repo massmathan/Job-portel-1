@@ -5,8 +5,12 @@ const JobFilters = ({ filters, setFilters }) => {
   return (
     <Form className="mb-4">
       <Row className="g-3">
-        <Col md={3}>
-          <Form.Control
+        <Col md={3} >
+
+         {/* <Form.Select  className="mb-3 p-3"  required>
+                    <option value="">-- Select a job --</option>
+                  </Form.Select> */}
+          <Form.Control className="p-2"
             type="text"
             placeholder="Filter by location"
             value={filters.location}
@@ -14,7 +18,7 @@ const JobFilters = ({ filters, setFilters }) => {
           />
         </Col>
         <Col md={3}>
-          <Form.Control
+          <Form.Control className="p-2"
             type="text"
             placeholder="Filter by company"
             value={filters.company}
@@ -22,7 +26,7 @@ const JobFilters = ({ filters, setFilters }) => {
           />
         </Col>
         <Col md={2}>
-          <Form.Select
+          <Form.Select className="p-2"
             value={filters.jobType}
             onChange={(e) => setFilters({ ...filters, jobType: e.target.value })}
           >
@@ -34,7 +38,7 @@ const JobFilters = ({ filters, setFilters }) => {
           </Form.Select>
         </Col>
         <Col md={2}>
-          <Form.Control
+          <Form.Control className="p-2"
             type="number"
             placeholder="Min Salary"
             value={filters.salary}
@@ -42,7 +46,7 @@ const JobFilters = ({ filters, setFilters }) => {
           />
         </Col>
         <Col md={2}>
-          <Form.Control
+          <Form.Control className="p-2" 
             type="date"
             value={filters.postingDate}
             onChange={(e) => setFilters({ ...filters, postingDate: e.target.value })}

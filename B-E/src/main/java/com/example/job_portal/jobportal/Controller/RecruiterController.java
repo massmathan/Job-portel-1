@@ -37,19 +37,22 @@ public class RecruiterController {
         
     }
 
-    @GetMapping("/metrics")
-    public MetricsResponse getMetrics() {
-        return recruiterService.getRecruiterMetrics();
+    @GetMapping("/metrics/{id}")
+    public MetricsResponse getMetrics(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        return recruiterService.getRecruiterMetrics(user);
     }
 
-    @GetMapping("/pipeline")
-    public Map<String, List<RecruiterDto>> getPipeline() {
-        return recruiterService.getPipeline();
+    @GetMapping("/pipeline/{id}")
+    public Map<String, List<RecruiterDto>> getPipeline(@PathVariable Long id) {
+         User user = userRepository.findById(id).orElse(null);
+        return recruiterService.getPipeline(user);
     }
 
-    @GetMapping("/recent-applicants")
-    public ResponseEntity<List<Applicant>> getRecentApplicants() {
-        return ResponseEntity.ok(recruiterService.getRecentApplicants());
+    @GetMapping("/recent-applicants/{id}")
+    public ResponseEntity<List<Applicant>> getRecentApplicants(@PathVariable Long id) {
+         User user = userRepository.findById(id).orElse(null);
+        return ResponseEntity.ok(recruiterService.getRecentApplicants(user));
     }
 
     @PostMapping("/update-stage")

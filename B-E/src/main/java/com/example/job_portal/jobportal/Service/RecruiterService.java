@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.job_portal.jobportal.DTO.MetricsResponse;
 import com.example.job_portal.jobportal.DTO.RecruiterDto;
 import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
  
@@ -23,19 +24,19 @@ public class RecruiterService {
     @Autowired
     private ApplicantRepository applicantRepo;
 
-    public MetricsResponse getRecruiterMetrics() {
-        long totalJobs = jobRepo.count();
-        long applications = applicantRepo.count();
-        long hires = applicantRepo.countByStatus("Hired");
+    public MetricsResponse getRecruiterMetrics(User user) {
+        long totalJobs = jobRepo.countByRecruiter(user);
+        long applications = applicantRepo.countByRecruiter(user);
+        long hires = applicantRepo.countByStatusAndRecruiter("Hired",user);
         long openPositions = totalJobs; 
         return new MetricsResponse(totalJobs, openPositions, applications, hires);
     }
 
-    public Map<String, List<RecruiterDto>> getPipeline() {
+    public Map<String, List<RecruiterDto>> getPipeline(User user) {
         Map<String, List<RecruiterDto>> pipeline = new LinkedHashMap<>();
         String[] stages = {"Applied","Interview","Offer","Hired"};
         for(String stage : stages){
-            List<RecruiterDto> list = applicantRepo.findByStatus(stage)
+            List<RecruiterDto> list = applicantRepo.findByStatusAndRecruiter(stage,user)
                 .stream()
                 .map(a -> new RecruiterDto(a.getId(), a.getName(), a.getJob().getTitle(), a.getStatus()))
                 .toList();
@@ -44,8 +45,8 @@ public class RecruiterService {
         return pipeline;
     }
 
-    public List<Applicant> getRecentApplicants() {
-         return applicantRepo.findTop10ByOrderByCreatedDateDesc();
+    public List<Applicant> getRecentApplicants(User user) {
+         return applicantRepo.findTop10ByRecruiterOrderByCreatedDateDesc(user);
     }
 
     public void updateApplicantStage(Long applicantId, String status) {

@@ -10,12 +10,15 @@ import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.job_portal.jobportal.Module.Applicant;
+import com.example.job_portal.jobportal.Module.User;
 import com.example.job_portal.jobportal.Repository.ApplicantRepository;
 import com.example.job_portal.jobportal.Repository.JobRepository;
+import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -28,15 +31,18 @@ public class AnalyticsController {
 
     private final ApplicantRepository applicantRepository;
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
-    public AnalyticsController(ApplicantRepository applicantRepository, JobRepository jobRepository) {
+    public AnalyticsController(ApplicantRepository applicantRepository, JobRepository jobRepository,UserRepository userRepository) {
         this.applicantRepository = applicantRepository;
         this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
     }
 
-   @GetMapping("/applications-per-job")
-    public List<Map<String, Object>> getApplicationsPerJob() {
-        List<Object[]> results = applicantRepository.countApplicationsPerJob();
+   @GetMapping("/applications-per-job/{id}")
+    public List<Map<String, Object>> getApplicationsPerJob(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        List<Object[]> results = (user != null) ? applicantRepository.countApplicationsPerJob(user) : applicantRepository.countApplicationsPerJob();
         List<Map<String, Object>> response = new ArrayList<>();
         for (Object[] row : results) {
             Map<String, Object> map = new HashMap<>();
@@ -47,9 +53,12 @@ public class AnalyticsController {
         return response;
     }
 
-    @GetMapping("/job-trend")
-    public List<Map<String, Object>> getJobPostingTrend() {
-        List<Object[]> results = jobRepository.countJobsPerMonth();
+    @GetMapping("/job-trend/{id}")
+    public List<Map<String, Object>> getJobPostingTrend(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        List<Object[]> results;
+         results = (user != null) ? jobRepository.countJobsPerMonth(user) : jobRepository.countJobsPerMonth() ;
+        System.out.println(results);
         List<Map<String, Object>> response = new ArrayList<>();
         for (Object[] row : results) {
             Map<String, Object> map = new HashMap<>();
@@ -60,14 +69,16 @@ public class AnalyticsController {
         return response;
     }
 
-   @GetMapping("/time-to-hire")
-    public Map<String, Object> getAverageTimeToHire() {
-        Double avgTime = applicantRepository.calculateAverageTimeToHire();
+   @GetMapping("/time-to-hire/{id}")
+    public Map<String, Object> getAverageTimeToHire(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        Double avgTime =  (user != null) ?  applicantRepository.calculateAverageTimeToHire(user) : applicantRepository.calculateAverageTimeToHire();
         System.out.println(avgTime);
         Map<String, Object> response = new HashMap<>();
         response.put("averageTimeToHire", avgTime );
         return response;
     }
+    
     @GetMapping(value = "/export/csv", produces = "text/csv")
     public void exportCsv(HttpServletResponse response) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=report.csv");

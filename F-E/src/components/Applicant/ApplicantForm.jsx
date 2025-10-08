@@ -17,8 +17,11 @@ function ApplicantForm() {
   const [recruiterId, setRecruiterId] = useState(0);
   const [recruiters, setRecruiters] = useState([]);
   const [loading, setLoading] = useState(false);
+   const alertFlag = false ; 
 
   let { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
+    let { role } = useContext(AuthContext) ?? { token: localStorage.getItem("role") };
+
 
   const navigate = useNavigate();
 
@@ -27,30 +30,31 @@ function ApplicantForm() {
 
     const fetchData = async () => {
       try {
-      
+
         if (id) {
           const jobResponse = await ApiService.get(`/job/get/${id}`, {
             Authorization: `Bearer ${token}`,
           });
-
+          console.log('job application',jobResponse.data);
           // const jobResponse = await axios.get(`http://localhost:8080/api/job/get/${id}`, {
           //   headers: { Authorization: `Bearer ${token}` },
           // });
           console.log(jobResponse.data);
           setRecruiters(jobResponse.data);
           setRecruiterId(jobResponse.data.recruiter.id); 
-
-          const recruiterResponse = await ApiService.get(`/recruiter/${jobResponse.data.recruiter.id}`, 
+          const apiUrl = (role == 'USER')?"/applicants/":"/recruiter/";
+          const recruiterResponse = await ApiService.get(`${apiUrl}${jobResponse.data.recruiter.id}`, 
             { Authorization: `Bearer ${token}` }
         );
-          console.log(recruiterResponse.data);
+          console.log("Recuriter data ",recruiterResponse.data);
           setRecruiters(recruiterResponse.data);
-          setRecruiterId(Number(recruiterResponse.id)); 
+          setRecruiterId(Number(recruiterResponse.data.id)); 
         }
 
         const jobsResponse = await ApiService.get("/job/getAll", 
            { Authorization: `Bearer ${token}` }
         );
+        console.log(jobsResponse);
         setJobs(jobsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -83,11 +87,13 @@ function ApplicantForm() {
     formData.append("recruiterId", recruiterId);
 
     try {
+      console.log("form data",formData);
       const response = await ApiService.post("/applicants/apply", formData,
       {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         });
+
       alert("Application submitted!");
       setName(""); setEmail(""); setResume(null); setJobTitle(""); setJobId(""); setRecruiterId("");
       navigate("/applicants-list");
@@ -103,6 +109,7 @@ function ApplicantForm() {
     <div className="container pt-5 pb-5 d-flex justify-content-center">
       {loading && <LoadingSpinner />} 
       <div className="col-sm-6 p-4 border rounded shadow-sm bg-light">
+      
         <h2 className="text-center mb-4">Apply for a Job</h2>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <FloatingLabel label="Full Name" className="mb-3">
@@ -132,7 +139,7 @@ function ApplicantForm() {
             <Form.Control type="file" accept="application/pdf" onChange={e => setResume(e.target.files[0])} required />
           </Form.Group>
 
-          <Button className="w-100 mt-3" variant="primary" type="submit">
+          <Button className="w-100 mt-3" variant="primary" data-bs-dismiss="alert" aria-label="Close" type="submit">
             {loading ? "Submitting..." : "Submit Application"}
           </Button>
         </Form>

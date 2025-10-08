@@ -6,6 +6,8 @@ import { AuthContext } from "../AuthContext/AuthContext";
 
 const RecruiterDashboard = () => {
   const { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
+    const { userId } = useContext(AuthContext) ?? { token: localStorage.getItem("userId") };
+
 
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({ totalJobs: 0, openPositions: 0, applications: 0, hires: 0 });
@@ -24,10 +26,11 @@ const RecruiterDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const id = userId;
         const [metricsRes, pipelineRes, recentRes] = await Promise.all([
-          axios.get("http://localhost:8080/api/recruiter/metrics", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://localhost:8080/api/recruiter/pipeline", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://localhost:8080/api/recruiter/recent-applicants", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`http://localhost:8080/api/recruiter/metrics/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`http://localhost:8080/api/recruiter/pipeline/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`http://localhost:8080/api/recruiter/recent-applicants/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         console.log("Metrics Response:", metricsRes.data);

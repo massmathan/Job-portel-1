@@ -15,22 +15,25 @@ import com.example.job_portal.jobportal.Repository.ApplicationRepository;
 import com.example.job_portal.jobportal.Repository.UserRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
  
 
 @Service
-@RequiredArgsConstructor
 
 public class ApplicantService {
 
-    private final ApplicantRepository applicantRepository;
-    private final ApplicationRepository applicationRepository;
-    private UserRepository userRepository;
-
-    private EmailService emailService;
     @Autowired
-    public ApplicantService(ApplicantRepository applicantRepository,
-                            ApplicationRepository applicationRepository,EmailService emailService,UserRepository userRepository) {
+    private final ApplicantRepository applicantRepository;
+
+    @Autowired
+    private final ApplicationRepository applicationRepository;
+
+    @Autowired
+    private final UserRepository userRepository;
+
+    @Autowired
+    private final EmailService emailService;
+
+    public ApplicantService(ApplicantRepository applicantRepository, ApplicationRepository applicationRepository, EmailService emailService, UserRepository userRepository) {
         this.applicantRepository = applicantRepository;
         this.applicationRepository = applicationRepository;
         this.emailService = emailService;
@@ -38,6 +41,7 @@ public class ApplicantService {
     }
 
 
+    
     public List<Application> getApplications(User user) {
         System.out.println("Mathan");
         List<Application> aplication =  applicationRepository.findByApplicantOrderByCreatedAtDesc(user);
@@ -50,13 +54,13 @@ public class ApplicantService {
     }
 
 
-    public ApplicantDto getMetrics() {
+    public ApplicantDto getMetrics(User user) {
         ApplicantDto dto = new ApplicantDto();
 
-        long totalApplications = applicantRepository.count();
-        long interviews = applicantRepository.countByStatus("Interview");
-        long offers = applicantRepository.countByStatus("Hired");
-        long rejections = applicantRepository.countByStatus("Rejected");
+        long totalApplications = applicantRepository.countByRecruiter(user);
+        long interviews = applicantRepository.countByStatusAndRecruiter("Interview",user);
+        long offers = applicantRepository.countByStatusAndRecruiter("Hired",user);
+        long rejections = applicantRepository.countByStatusAndRecruiter("Rejected",user);
 
         System.out.println("=== Applicant Metrics ===");
         System.out.println("Total Applications: " + totalApplications);
@@ -114,8 +118,8 @@ public class ApplicantService {
         return applicantRepository.save(applicant);
     }
 
-    public List<Applicant> getAllApplicants() {
-        return applicantRepository.findByOrderByCreatedDateDesc();
+    public List<Applicant> getAllApplicants(User user) {
+        return applicantRepository.findByRecruiterOrderByCreatedDateDesc(user);
     }
 
     public List<Applicant> getAll() {
@@ -140,9 +144,13 @@ public class ApplicantService {
             applicant.setHireDate(LocalDateTime.now());
         }else if("INTERVIEW".equalsIgnoreCase(status)){
             applicant.setInterviewDate(LocalDateTime.now());
+        }else if("REJECTED".equalsIgnoreCase(status)){
+            applicant.setRejectedDate(LocalDateTime.now());
+        }else if("INPROCESS".equalsIgnoreCase(status)){
+            applicant.setInProcessDate(LocalDateTime.now());
+        } else if("Receive".equalsIgnoreCase(status)){
+            applicant.setReceiveDate(LocalDateTime.now());
         }
         return applicantRepository.save(applicant);
     }
-
- 
 }

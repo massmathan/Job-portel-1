@@ -32,6 +32,7 @@ import com.example.job_portal.jobportal.Module.Applicant;
 import com.example.job_portal.jobportal.Module.Application;
 import com.example.job_portal.jobportal.Module.Jobs;
 import com.example.job_portal.jobportal.Module.User;
+import com.example.job_portal.jobportal.Repository.UserRepository;
 import com.example.job_portal.jobportal.Service.ApplicantService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -39,17 +40,34 @@ import com.example.job_portal.jobportal.Service.ApplicantService;
 @RequestMapping("/api/applicants")
 public class ApplicantController {
 
+   
+    private final ApplicantService applicantService;
+
+    private final UserRepository userRepository;
     @Autowired
-    private ApplicantService applicantService;
+    public ApplicantController(ApplicantService applicantService, UserRepository userRepository) {
+        this.applicantService = applicantService;
+        this.userRepository = userRepository;
+    }
 
+    
 
-    @GetMapping("/metrics")
-    public ResponseEntity<ApplicantDto> getMetrics() {
-        ApplicantDto applicantDto = applicantService.getMetrics();
+    @GetMapping("/metrics/{id}")
+    public ResponseEntity<ApplicantDto> getMetrics(@PathVariable Long id) {
+         User user = userRepository.findById(id).orElse(null);
+        ApplicantDto applicantDto = applicantService.getMetrics(user);
         System.out.println("Interviews Scheduled: " + applicantDto.getInterviewsScheduled());
         return ResponseEntity.ok(applicantDto);
     }
+    
+        @GetMapping("/{id}")
+        public ResponseEntity<User> getRecruiterById(@PathVariable Long id) {
+            System.out.println("sacfsdzv d bxdfvdfv");
 
+            return userRepository.findById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        }
 
     @GetMapping("/applications")
     public List<Application> getApplications(@AuthenticationPrincipal User user) {
@@ -68,6 +86,9 @@ public class ApplicantController {
             @RequestParam("recruiterId") Long recruiterId  
     ) throws IOException {
 
+        System.out.println(name);
+        System.out.println(email);
+        System.out.println(jobTitle);
         String fileName = resumeFile.getOriginalFilename();
         Path uploadDir = Paths.get("uploads/resumes");
         Files.createDirectories(uploadDir);
@@ -84,30 +105,28 @@ public class ApplicantController {
         Jobs job = new Jobs();
         job.setId(jobId);
         applicant.setJob(job);
-
         Applicant saved = applicantService.submitApplication(applicant, recruiterId);
-
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
 
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Applicant>> getAllApplicants() {
-        List<Applicant> applicants = applicantService.getAllApplicants();
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<Applicant>> getAllApplicants(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        List<Applicant> applicants = applicantService.getAllApplicants(user);
         return ResponseEntity.ok(applicants);
     }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Applicant> getApplicantById(@PathVariable Long id) {
-        Applicant applicant = applicantService.getApplicantById(id);
-        if (applicant != null) {
-            return ResponseEntity.ok(applicant);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Applicant> getApplicantById(@PathVariable Long id) {
+    //     Applicant applicant = applicantService.getApplicantById(id);
+    //     if (applicant != null) {
+    //         return ResponseEntity.ok(applicant);
+    //     } else {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    // }
 
 
     @PutMapping("/{id}/status")
