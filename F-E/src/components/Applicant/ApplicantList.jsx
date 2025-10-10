@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../../AuthContext/AuthContext";
 import ApiService from "../../Service/ApiService";
 
+
 function ApplicantList() {
   const [applications, setApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,12 +20,13 @@ function ApplicantList() {
   useEffect(() => {
 
     
-         validateToken(token);
+    validateToken(token);
     // axios
     //   .get("http://localhost:8080/api/applicants/all", {
     //     headers: { Authorization: `Bearer ${token}` },
     //   })
-        ApiService.get(`/applicants/all/${userId}`, 
+    const userParamId = (role == "ADMIN" ? 0 : userId)
+        ApiService.get(`/applicants/all/${userParamId}`, 
             { Authorization: `Bearer ${token}` })
       .then((res) => {
         console.log("mathan",res.data);
@@ -35,6 +37,10 @@ function ApplicantList() {
 
   const handleStageChange = async (id, status) => {
     try {
+      
+    // const result = await alert('Are you really sure?');
+    // console.log('True if confirmed, false otherwise:', result);
+      
       await axios.put(
         `http://localhost:8080/api/applicants/${id}/status`,
         { status },
@@ -92,7 +98,7 @@ function ApplicantList() {
           </tr>
         </thead>
         <tbody>
-          {paginatedApps.map((app) => (
+          {Array.isArray(paginatedApps) && paginatedApps.map((app) => (
             <tr key={app.id}>
               <td className="text-capitalize">{app.name}</td>
               <td>{app.job?.companies?.companyName}</td>

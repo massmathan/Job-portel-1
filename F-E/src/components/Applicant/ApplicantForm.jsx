@@ -20,9 +20,9 @@ function ApplicantForm() {
    const alertFlag = false ; 
 
   let { token } = useContext(AuthContext) ?? { token: localStorage.getItem("accessToken") };
-    let { role } = useContext(AuthContext) ?? { token: localStorage.getItem("role") };
+    let { role, } = useContext(AuthContext) ?? { token: localStorage.getItem("role") };
 
-
+  let { userId } = useContext(AuthContext)
   const navigate = useNavigate();
 
    useEffect(() => {
@@ -39,6 +39,8 @@ function ApplicantForm() {
           // const jobResponse = await axios.get(`http://localhost:8080/api/job/get/${id}`, {
           //   headers: { Authorization: `Bearer ${token}` },
           // });
+          setJobTitle(jobResponse.data.title);
+          setJobId(jobResponse.data.id)
           console.log(jobResponse.data);
           setRecruiters(jobResponse.data);
           setRecruiterId(jobResponse.data.recruiter.id); 
@@ -85,6 +87,7 @@ function ApplicantForm() {
     formData.append("jobId", jobId);
     formData.append("status", "applied");
     formData.append("recruiterId", recruiterId);
+    formData.append("createdBy", userId);
 
     try {
       console.log("form data",formData);
@@ -122,11 +125,11 @@ function ApplicantForm() {
             <Form.Control.Feedback type="invalid">Please enter a valid email.</Form.Control.Feedback>
           </FloatingLabel>
 
-          <FloatingLabel label="Job Title" className="mb-3">
+          <FloatingLabel label="Job Title" className="mb-3" hidden>
             <Form.Control type="text" placeholder="Enter your job title" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
           </FloatingLabel>
 
-          <Form.Select value={jobId} className="mb-3 p-3" onChange={e => setJobId(e.target.value)} required>
+          <Form.Select value={jobId} className="mb-3 p-3" onChange={e => setJobId(e.target.value)} hidden>
             <option value="">-- Select a job --</option>
             {jobs.map(job => <option key={job.id} value={job.id}>{job.title}</option>)}
           </Form.Select>

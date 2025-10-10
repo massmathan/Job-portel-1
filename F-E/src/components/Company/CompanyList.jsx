@@ -71,7 +71,8 @@ const handleEdit = (id) => {
                   )}
                 </td>
                  <td>
-                  <button
+                  <div className="d-flex">
+                     <button
                     className="btn btn-primary btn-sm me-2"
                     onClick={() => handleEdit(company.id)}
                   >
@@ -83,6 +84,8 @@ const handleEdit = (id) => {
                   >
                     Delete
                   </button>
+                  </div>
+                 
                 </td>
                
                 <td>{company.companyName}</td>

@@ -8,11 +8,12 @@ import CompanyTable from "../components/Company/CompanyList";
 import JobList from "../components/Job/JobList";
 import PrivateRoute from "../AuthContext/PrivateRoute";
 import Dashboard from "../components/Dashboard";
-import DashboardLayout from "../pages/DashboardLayout";
+import DashboardLayout from "../pages/ApplicationLayout";
+
 
 function AppRouters() {
   return (
-      <Routes>
+      <Routes>      
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
          <Route
@@ -23,7 +24,6 @@ function AppRouters() {
               </PrivateRoute>
             } 
           />
-
         <Route path="/" element={<SignIn />} />
       </Routes>
   );

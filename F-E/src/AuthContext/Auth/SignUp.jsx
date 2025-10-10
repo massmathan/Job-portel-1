@@ -18,9 +18,9 @@ function SignUp() {
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [email,setEmail] = useState('');
-  const navigate = useNavigate();
-
   const { login } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault(); 
@@ -38,7 +38,7 @@ function SignUp() {
       username: `${firstName} ${lastName}`,
       email: email,
       password: confirmPassword,
-      role : 'ADMIN'
+      role : 'USER'
     };
 
     try {

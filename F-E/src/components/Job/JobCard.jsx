@@ -9,7 +9,7 @@ const JobCard = ({ job, handleSaveJob }) => {
     console.log(job);
   
   function onViewDetails(id) {
-  alert(`Job ID: ${id}`);
+  // alert(`Job ID: ${id}`);
   navigate(`/job-view/${id}`);
 }
 
@@ -39,7 +39,7 @@ const JobCard = ({ job, handleSaveJob }) => {
         )}
         {job?.salary && (
           <span className="badge bg-secondary">
-            ${job.salary.toLocaleString()}
+            ₹ {job.salary.toLocaleString()} Pre Month
           </span>
         )}
         {job?.experience && (
@@ -84,12 +84,12 @@ const JobCard = ({ job, handleSaveJob }) => {
       )}
 
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <button
+        {/* <button
           className="btn btn-outline-primary px-3"
           onClick={() => handleSaveJob(job)}
         >
           <i className="bi bi-heart me-1"></i> Save
-        </button>
+        </button> */}
         <Button onClick={() => onViewDetails(job.id)}>View</Button>
         <Link to={`/apply/${job?.id || ""}`}>
           <button className="btn btn-primary px-3">

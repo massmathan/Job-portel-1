@@ -83,7 +83,8 @@ public class ApplicantController {
             @RequestParam("jobTitle") String jobTitle,
             @RequestParam("jobId") Long jobId,
             @RequestParam("status") String status,
-            @RequestParam("recruiterId") Long recruiterId  
+            @RequestParam("recruiterId") Long recruiterId  ,
+            @RequestParam("createdBy") Long createdBy  
     ) throws IOException {
 
         System.out.println(name);
@@ -101,6 +102,7 @@ public class ApplicantController {
         applicant.setJobTitle(jobTitle);
         applicant.setResume(fileName);
         applicant.setStatus(status);
+        applicant.setCreatedBy(createdBy);
 
         Jobs job = new Jobs();
         job.setId(jobId);
@@ -112,10 +114,33 @@ public class ApplicantController {
 
     @GetMapping("/all/{id}")
     public ResponseEntity<List<Applicant>> getAllApplicants(@PathVariable Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        List<Applicant> applicants = applicantService.getAllApplicants(user);
+        List<Applicant> applicants;
+
+        if (id == 0) {
+            applicants = applicantService.getAllApplicants();
+            // System.out.println(applicants);
+        } else {
+            User user = userRepository.findById(id).orElse(null);
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            switch (user.getRole()) {
+                case "ADMIN":
+                    applicants = applicantService.getAllApplicants();
+                    break;
+                case "RECRUITER":
+                    applicants = applicantService.getAllApplicants(user);
+                    break;
+                default:
+                    applicants = applicantService.getAllApplicants(user.getId());
+                    break;
+            }
+        }
+
         return ResponseEntity.ok(applicants);
     }
+
 
 
     // @GetMapping("/{id}")

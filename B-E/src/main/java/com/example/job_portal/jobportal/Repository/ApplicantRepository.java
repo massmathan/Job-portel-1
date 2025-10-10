@@ -18,11 +18,18 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
     List<Applicant> findByStatusAndRecruiter(String status,User user);
 
     List<Applicant> findTop10ByOrderByIdDesc(); 
-        List<Applicant> findByRecruiterOrderByCreatedDateDesc(User user); 
+    List<Applicant> findByRecruiterOrderByCreatedDateDesc(User user); 
+List<Applicant> findByCreatedByOrderByCreatedDateDesc(Long userId);
+
+    List<Applicant> findByOrderByCreatedDateDesc(); 
+
     List<Applicant> findTop10ByOrderByCreatedDateDesc(); 
     List<Applicant> findTop10ByRecruiterOrderByCreatedDateDesc(User user);
 
     long countByRecruiter(User applicant);
+
+        long countByCreatedBy(Long applicant);
+
 
     
 

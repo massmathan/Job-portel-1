@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Others/Sidebar";
 import Navbars from "../components/Navbars";
 import CompanyForm from "../components/Company/CompanyForm";
 import JobPostForm from "../components/Job/JobPostForm";
@@ -14,7 +14,7 @@ import AdminDashboard from "./AdminDashboard";
 import ApplicantDashboard from "./ApplicantDashboard";
 import PrivateRoute from "../AuthContext/PrivateRoute";
 import { AuthContext } from "../AuthContext/AuthContext";
-import AnalyticsDashboard from "../components/AnalyticsDashboard";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 import JobDetailCard from "../components/Job/JobDetailCard";
 
 export default function DashboardLayout() {

@@ -34,7 +34,7 @@ public class RecruiterService {
 
     public Map<String, List<RecruiterDto>> getPipeline(User user) {
         Map<String, List<RecruiterDto>> pipeline = new LinkedHashMap<>();
-        String[] stages = {"Applied","Interview","Offer","Hired"};
+        String[] stages = {"InProcess","Interview","Hired","Rejected"};
         for(String stage : stages){
             List<RecruiterDto> list = applicantRepo.findByStatusAndRecruiter(stage,user)
                 .stream()

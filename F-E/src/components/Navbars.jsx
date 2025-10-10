@@ -58,12 +58,12 @@ export default function Navbars() {
 
             {user ? (
               <NavDropdown title="Account" id="account-dropdown" align="end" className="text-center" >
-                <NavDropdown.Item as={NavLink} to="/profile" className="fs-6 px-3 py-2">
+                {/* <NavDropdown.Item as={NavLink} to="/profile" className="fs-6 px-3 py-2">
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item as={NavLink} to="/settings">
                   Settings
-                </NavDropdown.Item>
+                </NavDropdown.Item> */}
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
               </NavDropdown>

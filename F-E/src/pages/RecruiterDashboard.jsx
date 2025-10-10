@@ -11,7 +11,7 @@ const RecruiterDashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({ totalJobs: 0, openPositions: 0, applications: 0, hires: 0 });
-  const [pipeline, setPipeline] = useState({ Applied: [], Interview: [], Offer: [], Hired: [] });
+  const [pipeline, setPipeline] = useState({ InProcess: [], Interview: [], Hired: [], Rejected: [] });
   const [recentApplications, setRecentApplications] = useState([]);
 
   const formatDate = (dateString) => {
@@ -41,16 +41,16 @@ const RecruiterDashboard = () => {
 
         const data = pipelineRes.data || {};
         setPipeline({
-          Applied: data.Applied || [],
+          InProcess: data.InProcess || [],
           Interview: data.Interview || [],
-          Offer: data.Offer || [],
           Hired: data.Hired || [],
+          Rejected: data.Rejected || [],
         });
 
         console.log("Normalized Pipeline State:", {
           Applied: data.Applied || [],
           Interview: data.Interview || [],
-          Offer: data.Offer || [],
+          Rejected: data.Rejected || [],
           Hired: data.Hired || [],
         });
 
@@ -65,10 +65,26 @@ const RecruiterDashboard = () => {
     fetchData();
   }, [token]);
 
+
+  const handleStageChange = async (id, status) => {
+    try {
+      await axios.put(
+        `http://localhost:8080/api/applicants/${id}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );  
+      
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
+  };
+
   const handleDragEnd = (result) => {
     console.log("Drag Result:", result);
 
     if (!result.destination) return;
+
+    console.log(result);
 
     const { source, destination } = result;
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
@@ -81,12 +97,12 @@ const RecruiterDashboard = () => {
     console.log("Moved Item:", movedItem);
     console.log("Updated Source Column:", sourceCol);
     console.log("Updated Destination Column:", destCol);
-
-    setPipeline({
-      ...pipeline,
-      [source.droppableId]: sourceCol,
-      [destination.droppableId]: destCol,
-    });
+    handleStageChange(movedItem.id, destination.droppableId);
+      setPipeline({
+        ...pipeline,
+        [source.droppableId]: sourceCol,
+        [destination.droppableId]: destCol,
+      });
   };
 
   if (loading) return <p className="text-center py-5">Loading dashboard...</p>;
@@ -95,7 +111,6 @@ const RecruiterDashboard = () => {
     <div className="container py-4">
       <h2 className="fw-bold mb-4 text-center">Recruiter Dashboard</h2>
 
-      {/* Metrics */}
       <Row className="mb-4">
         {Object.entries(metrics).map(([key, value]) => (
           <Col key={key}>
@@ -107,7 +122,6 @@ const RecruiterDashboard = () => {
         ))}
       </Row>
 
-      {/* Pipeline */}
       <h4 className="mb-3">Application Pipeline</h4>
       <div style={{ overflowX: "auto", paddingBottom: "1rem" }}>
         <DragDropContext onDragEnd={handleDragEnd}>
@@ -198,5 +212,6 @@ const RecruiterDashboard = () => {
     </div>
   );
 };
+
 
 export default RecruiterDashboard;

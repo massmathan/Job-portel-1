@@ -99,7 +99,6 @@ const AdminDashboard = () => {
 
       <h2 className="fw-bold mb-4 text-center">Admin Dashboard</h2>
 
-      {/* Top Metrics */}
       <Row className="mb-4 ">
         <Col>
           <Card className="text-center p-3 shadow-sm">
@@ -135,7 +134,6 @@ const AdminDashboard = () => {
       </Row>
       
 
-      {/* Latest Users */}
       <h4 className="mt-4 mb-3">Recent Users</h4>
       <Table striped hover  responsive >
         <thead>
@@ -162,9 +160,9 @@ const AdminDashboard = () => {
                 >
                   Edit
                 </Button>{" "}
-                <Button size="sm" variant="outline-danger">
+                {/* <Button size="sm" variant="outline-danger">
                   Deactivate
-                </Button>
+                </Button> */}
               </td>
               <td>{formatDate(user.createdAt)}</td>
 
@@ -173,7 +171,6 @@ const AdminDashboard = () => {
         </tbody>
       </Table>
 
-      {/* Latest Applications */}
       <h4 className="mt-4 mb-3">Recent Applications</h4>
       <Table striped hover responsive>
         <thead>
@@ -226,7 +223,6 @@ const AdminDashboard = () => {
         </tbody>
       </Table>
 
-      {/* Modal for editing */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit User</Modal.Title>

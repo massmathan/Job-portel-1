@@ -57,7 +57,8 @@ public class ApplicantService {
     public ApplicantDto getMetrics(User user) {
         ApplicantDto dto = new ApplicantDto();
 
-        long totalApplications = applicantRepository.countByRecruiter(user);
+        // long totalApplications = applicantRepository.countByRecruiter(user);
+        long totalApplications = applicantRepository.countByCreatedBy(user.getId());
         long interviews = applicantRepository.countByStatusAndRecruiter("Interview",user);
         long offers = applicantRepository.countByStatusAndRecruiter("Hired",user);
         long rejections = applicantRepository.countByStatusAndRecruiter("Rejected",user);
@@ -118,8 +119,15 @@ public class ApplicantService {
         return applicantRepository.save(applicant);
     }
 
+    public List<Applicant> getAllApplicants(Long userId) {
+        return applicantRepository.findByCreatedByOrderByCreatedDateDesc(userId);
+    }
     public List<Applicant> getAllApplicants(User user) {
         return applicantRepository.findByRecruiterOrderByCreatedDateDesc(user);
+    }
+
+     public List<Applicant> getAllApplicants() {
+        return applicantRepository.findByOrderByCreatedDateDesc();
     }
 
     public List<Applicant> getAll() {

@@ -30,6 +30,7 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
 
     public User() {}
 

@@ -60,6 +60,8 @@ public class Applicant {
 
     private LocalDateTime receiveDate;
 
+    private Long createdBy;
+
     public Long getId() {
         return id;
     }
@@ -179,6 +181,14 @@ public class Applicant {
 
     public void setReceiveDate(LocalDateTime receiveDate) {
         this.receiveDate = receiveDate;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
     }
 
     

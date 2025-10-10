@@ -85,9 +85,6 @@ const ApplicantDashboard = () => {
         </Col>
       </Row>
 
-     
-
-
       <h4 className="mt-2 mb-3">My Applications</h4>
       <Table striped bordered hover responsive>
         <thead className="table-dark">

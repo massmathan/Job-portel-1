@@ -11,7 +11,6 @@ export default function RoleNavbar() {
     navigate("/signin");
   };
 
-  // Menu definitions per role
   const menus = {
     ADMIN: [
       { path: "/admin/dashboard", label: "Dashboard" },
@@ -34,7 +33,6 @@ export default function RoleNavbar() {
     ],
   };
 
-  // Choose the menu based on role (default: empty)
   const menuItems = menus[role] || [];
 
   return (

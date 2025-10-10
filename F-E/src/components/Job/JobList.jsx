@@ -34,7 +34,7 @@ const JobList = () => {
       (filters.company === "" || job.companies?.companyName.toLowerCase().includes(filters.company.toLowerCase())) &&
       (filters.jobType === "" || job.jobType?.toLowerCase() === filters.jobType.toLowerCase()) &&
       (filters.salary === "" || job.salary >= parseInt(filters.salary)) && 
-      (filters.postingDate === "" || new Date(job.postingDate) >= new Date(filters.postingDate))
+      (filters.postingDate === "" || new Date(job.postingDate) <= new Date(filters.postingDate))
     );
   });
 
